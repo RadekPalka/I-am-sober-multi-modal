@@ -68,7 +68,7 @@ public class HomeScreen implements Screen{
         }
     }
 
-    public void resetInstance(){
+    public static void resetInstance(){
         instance = null;
     }
 
