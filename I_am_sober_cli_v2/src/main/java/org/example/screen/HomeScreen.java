@@ -6,10 +6,15 @@ import java.util.Scanner;
 
 public class HomeScreen implements Screen{
     private static HomeScreen instance;
+    private Screen registerScreen = RegisterScreen.getInstance();
     private Scanner scanner;
     private String option;
     private HomeScreen(){
         scanner = new Scanner(System.in);
+    }
+
+    public void setRegisterScreen(Screen screen){
+        this.registerScreen = screen; 
     }
 
     private HomeScreen(Scanner scanner){
@@ -56,7 +61,7 @@ public class HomeScreen implements Screen{
     private void checkUserOption(){
         switch (option.toLowerCase().trim()){
             case "r":
-                RegisterScreen.getInstance().init();
+                registerScreen.init();
                 break;
             case "l":
                 LoginScreen.getInstance().init();

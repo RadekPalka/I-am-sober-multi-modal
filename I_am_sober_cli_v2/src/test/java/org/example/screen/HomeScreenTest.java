@@ -1,4 +1,6 @@
 package org.example.screen;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,18 +26,29 @@ public class HomeScreenTest{
   }
 
   @Test
-  void shouldSomething(){
-    Scanner scanner = new Scanner("x\nr\n");
-    ByteArrayOutputStream output = new ByteArrayOutputStream();
-    System.setOut(new PrintStream(output));
+    void shouldPromptAgainWhenInvalidOptionAndCallRegisterScreen() {
+        // Simulate user entering "x" (invalid), then "r" (valid)
+        Scanner scanner = new Scanner("x\nr\n");
 
-    HomeScreen.resetInstance();
-    HomeScreen screen = HomeScreen.getInstance(scanner);
-    screen.init();
+        // Capture printed output
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(output));
 
-    
-    String printed = output.toString();
+        // Mock RegisterScreen
+        Screen mockRegisterScreen = mock(Screen.class);
 
-    assertTrue(printed.contains("Choose correct option"));
-  }
+        // Set up HomeScreen
+        HomeScreen screen = HomeScreen.getInstance(scanner);
+        screen.setRegisterScreen(mockRegisterScreen);
+
+        // Run the program logic
+        screen.init();
+
+        // Verify output contains error message
+        String printed = output.toString();
+        assertTrue(printed.contains("Choose correct option"));
+
+        // Verify registerScreen.init() was called
+        verify(mockRegisterScreen).init();
+    }
 }
