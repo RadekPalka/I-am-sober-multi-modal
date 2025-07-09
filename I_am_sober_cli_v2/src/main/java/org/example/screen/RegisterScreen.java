@@ -5,9 +5,13 @@ import org.example.util.ScreenInputHelper;
 
 public class RegisterScreen extends AbstractUserInputScreen{
     private static RegisterScreen instance;
+    private Screen registerScreen = RegisterScreen.getInstance();
 
     private RegisterScreen(){}
 
+    public void setRegisterScreen(Screen screen){
+        this.registerScreen = screen; 
+    }
 
     public static RegisterScreen getInstance(){
         if (instance == null){
