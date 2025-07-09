@@ -6,13 +6,26 @@ import java.util.Scanner;
 
 public class HomeScreen implements Screen{
     private static HomeScreen instance;
-    private final Scanner scanner = new Scanner(System.in);
+    private Scanner scanner;
     private String option;
-    private HomeScreen(){}
+    private HomeScreen(){
+        scanner = new Scanner(System.in);
+    }
+
+    private HomeScreen(Scanner scanner){
+        this.scanner = scanner;
+    }
 
     public static HomeScreen getInstance(){
         if (instance == null){
             instance = new HomeScreen();
+        }
+        return instance;
+    }
+
+    public static HomeScreen getInstance(Scanner scanner){
+        if (instance == null){
+            instance = new HomeScreen(scanner);
         }
         return instance;
     }
@@ -53,6 +66,10 @@ public class HomeScreen implements Screen{
                 break;
 
         }
+    }
+
+    public void resetInstance(){
+        instance = null;
     }
 
     @Override
