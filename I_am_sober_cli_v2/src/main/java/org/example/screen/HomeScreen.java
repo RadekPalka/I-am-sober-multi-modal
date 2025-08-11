@@ -44,7 +44,7 @@ public class HomeScreen implements Screen{
 
                 break;
             case "l":
-                LoginScreen.getInstance().init();
+
                 break;
             case "e":
                 System.exit(0);
