@@ -1,16 +1,22 @@
 package org.example.screen;
 
 import org.example.util.InputValidator;
+import org.example.util.ScreenManager;
 
 import java.util.Scanner;
 
 public class HomeScreen implements Screen{
     private Scanner scanner;
     private String option;
+    private Screen registerScreen;
+    private Screen loginScreen;
 
 
-    public HomeScreen(Scanner scanner){
+    public HomeScreen(Scanner scanner, Screen registerScreen, Screen loginScreen){
+
         this.scanner = scanner;
+        this.registerScreen = registerScreen;
+        this.loginScreen = loginScreen;
     }
 
 
@@ -41,10 +47,10 @@ public class HomeScreen implements Screen{
     private void checkUserOption(){
         switch (option.toLowerCase().trim()){
             case "r":
-
+                ScreenManager.initScreen(registerScreen);
                 break;
             case "l":
-
+                ScreenManager.initScreen(loginScreen);
                 break;
             case "e":
                 System.exit(0);

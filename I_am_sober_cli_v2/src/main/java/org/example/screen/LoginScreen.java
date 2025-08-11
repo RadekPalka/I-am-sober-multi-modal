@@ -1,6 +1,6 @@
 package org.example.screen;
 
-public class LoginScreen {
+public class LoginScreen implements Screen{
 
 
   public LoginScreen(){}

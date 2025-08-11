@@ -1,6 +1,6 @@
 package org.example.screen;
 
-public class RegisterScreen {
+public class RegisterScreen implements Screen{
 
     
 
