@@ -1,6 +1,7 @@
 package org.example.screen;
 
 import com.example.util.UserValidator;
+import org.example.util.InputValidator;
 
 import java.util.Scanner;
 
@@ -33,7 +34,10 @@ public class RegisterScreen implements Screen{
         while (true){
             System.out.print("Enter your password: ");
             userInput = scanner.nextLine();
-            if (UserValidator.isValidPassword(userInput)){
+            if (InputValidator.isQuitCommand(userInput)){
+                System.exit(0);
+            }
+            else if (UserValidator.isValidPassword(userInput)){
                 password = userInput;
                 break;
             }
@@ -50,7 +54,10 @@ public class RegisterScreen implements Screen{
         while (true){
             System.out.print("Confirm your password: ");
             userInput = scanner.nextLine();
-            if (password.equals(userInput)){
+            if (InputValidator.isQuitCommand(userInput)){
+                System.exit(0);
+            }
+            else if (password.equals(userInput)){
 
                 break;
             }
