@@ -1,5 +1,7 @@
 package org.example.screen;
 
+import com.example.client.ApiClient;
+import com.example.global.Global;
 import com.example.util.UserValidator;
 import org.example.util.InputValidator;
 
@@ -10,10 +12,12 @@ public class RegisterScreen implements Screen{
     private String password;
     private String userInput;
     private Scanner scanner;
+    private ApiClient apiClient;
     
 
-    public RegisterScreen(Scanner scanner){
+    public RegisterScreen(Scanner scanner, ApiClient apiClient){
         this.scanner = scanner;
+        this.apiClient = apiClient;
     }
 
     private void getLoginFromUser(){
@@ -67,12 +71,34 @@ public class RegisterScreen implements Screen{
 
     }
 
+    private void clearUserData(){
+        login = null;
+        password = null;
+    }
+
+    private void sendDataToApi(){
+        String json = String.format("""
+    {
+      "username": "%s",
+      "password": "%s"
+    }
+    """, login, password);
+        try {
+            String response = apiClient.post(Global.registerUrl, json);
+            System.out.println("Response from API: " + response);
+        } catch (Exception e) {
+            System.out.println("API call failed: " + e.getMessage());
+        }
+    }
+
+
 
     public void init(){
         displayLabel();
         getLoginFromUser();
         getPasswordFromUser();
         confirmPassword();
+        sendDataToApi();
     }
 
 }
