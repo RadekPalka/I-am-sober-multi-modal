@@ -14,7 +14,7 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         ApiClient apiClient = new ApiClient();
         Screen registerScreen = new RegisterScreen(scanner, apiClient);
-        Screen loginScreen = new LoginScreen(scanner);
+        Screen loginScreen = new LoginScreen(scanner, apiClient);
 
 
         HomeScreen homeScreen = new HomeScreen(scanner, registerScreen, loginScreen);
