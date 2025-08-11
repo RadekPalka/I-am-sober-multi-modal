@@ -1,9 +1,17 @@
 package org.example.screen;
 
+import java.util.Scanner;
+
 public class LoginScreen implements Screen{
+    private String login;
+    private String password;
+    private String userInput;
+    private Scanner scanner;
 
 
-  public LoginScreen(){}
+    public LoginScreen(Scanner scanner){
+        this.scanner = scanner;
+    }
 
 
 

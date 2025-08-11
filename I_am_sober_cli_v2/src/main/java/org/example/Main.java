@@ -10,9 +10,10 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        Screen registerScreen = new RegisterScreen();
-        Screen loginScreen = new LoginScreen();
         Scanner scanner = new Scanner(System.in);
+        Screen registerScreen = new RegisterScreen(scanner);
+        Screen loginScreen = new LoginScreen(scanner);
+
         HomeScreen homeScreen = new HomeScreen(scanner, registerScreen, loginScreen);
 
         homeScreen.init();
