@@ -5,35 +5,15 @@ import org.example.util.InputValidator;
 import java.util.Scanner;
 
 public class HomeScreen implements Screen{
-    private static HomeScreen instance;
-    private Screen registerScreen = RegisterScreen.getInstance();
     private Scanner scanner;
     private String option;
-    private HomeScreen(){
-        scanner = new Scanner(System.in);
-    }
 
-    public void setRegisterScreen(Screen screen){
-        this.registerScreen = screen; 
-    }
 
-    private HomeScreen(Scanner scanner){
+    public HomeScreen(Scanner scanner){
         this.scanner = scanner;
     }
 
-    public static HomeScreen getInstance(){
-        if (instance == null){
-            instance = new HomeScreen();
-        }
-        return instance;
-    }
 
-    public static HomeScreen getInstance(Scanner scanner){
-        if (instance == null){
-            instance = new HomeScreen(scanner);
-        }
-        return instance;
-    }
 
     private void displayGreeting(){
         System.out.println("Welcome to I AM SOBER");
@@ -61,7 +41,7 @@ public class HomeScreen implements Screen{
     private void checkUserOption(){
         switch (option.toLowerCase().trim()){
             case "r":
-                registerScreen.init();
+
                 break;
             case "l":
                 LoginScreen.getInstance().init();
@@ -73,9 +53,7 @@ public class HomeScreen implements Screen{
         }
     }
 
-    public static void resetInstance(){
-        instance = null;
-    }
+
 
     @Override
     public void init(){

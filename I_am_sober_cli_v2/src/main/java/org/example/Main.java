@@ -3,9 +3,12 @@ package org.example;
 
 import org.example.screen.HomeScreen;
 
+import java.util.Scanner;
+
 public class Main {
     public static void main(String[] args) {
-        HomeScreen.getInstance().init();
+        Scanner scanner = new Scanner(System.in);
+        HomeScreen homeScreen = new HomeScreen(scanner);
 
     }
 }

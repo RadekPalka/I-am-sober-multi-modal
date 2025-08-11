@@ -1,6 +1,6 @@
 package org.example.screen;
 
-public class LoginScreen extends AbstractUserInputScreen{
+public class LoginScreen {
   private static LoginScreen instance;
 
   private LoginScreen(){}
@@ -16,10 +16,9 @@ public class LoginScreen extends AbstractUserInputScreen{
       System.out.println("Sing up");
   }
 
-  @Override
+
     public void init(){
         displayLabel();
-        getLoginFromUser(instance);
-        getPasswordFromUser(instance);
+
     }
 }
