@@ -7,7 +7,6 @@ import java.util.Scanner;
 
 public class HomeScreen implements Screen{
     private Scanner scanner;
-    private String option;
     private Screen registerScreen;
     private Screen loginScreen;
 
@@ -33,7 +32,8 @@ public class HomeScreen implements Screen{
     }
 
 
-    private void getOptionFromUser(){
+    private String getOptionFromUser(){
+        String option;
         do{
             option = scanner.nextLine().trim();
             if (!InputValidator.isValidMainMenuOption(option)){
@@ -41,10 +41,10 @@ public class HomeScreen implements Screen{
                 showMenu();
             }
         }while(!InputValidator.isValidMainMenuOption(option));
-
+        return option;
     }
 
-    private void checkUserOption(){
+    private void checkUserOption(String option){
         switch (option.toLowerCase().trim()){
             case "r":
                 ScreenManager.initScreen(registerScreen);
@@ -65,7 +65,7 @@ public class HomeScreen implements Screen{
     public void init(){
         displayGreeting();
         showMenu();
-        getOptionFromUser();
-        checkUserOption();
+        String option = getOptionFromUser();
+        checkUserOption(option);
     }
 }
