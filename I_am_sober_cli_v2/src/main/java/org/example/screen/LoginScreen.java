@@ -1,5 +1,6 @@
 package org.example.screen;
 
+import com.example.auth.Session;
 import com.example.client.ApiClient;
 import com.example.global.Global;
 import com.example.util.UserValidator;
@@ -11,11 +12,13 @@ public class LoginScreen implements Screen{
 
     private Scanner scanner;
     private ApiClient apiClient;
+    private Session session;
 
 
-    public LoginScreen(Scanner scanner, ApiClient apiClient){
+    public LoginScreen(Scanner scanner, ApiClient apiClient, Session session){
         this.scanner = scanner;
         this.apiClient = apiClient;
+        this.session = session;
     }
 
     public void init(){

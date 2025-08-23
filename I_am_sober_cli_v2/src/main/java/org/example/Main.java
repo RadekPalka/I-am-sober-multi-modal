@@ -1,6 +1,7 @@
 package org.example;
 
 
+import com.example.auth.Session;
 import com.example.client.ApiClient;
 import org.example.screen.HomeScreen;
 import org.example.screen.LoginScreen;
@@ -12,9 +13,10 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        ApiClient apiClient = new ApiClient();
-        Screen registerScreen = new RegisterScreen(scanner, apiClient);
-        Screen loginScreen = new LoginScreen(scanner, apiClient);
+        Session session = new Session();
+        ApiClient apiClient = new ApiClient(session);
+        Screen registerScreen = new RegisterScreen(scanner, apiClient, session);
+        Screen loginScreen = new LoginScreen(scanner, apiClient, session);
 
 
         HomeScreen homeScreen = new HomeScreen(scanner, registerScreen, loginScreen);

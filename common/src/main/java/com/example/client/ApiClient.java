@@ -1,5 +1,6 @@
 package com.example.client;
 
+import com.example.auth.Session;
 import com.example.global.Global;
 
 import java.net.URI;
@@ -10,9 +11,11 @@ import java.time.Duration;
 
 public class ApiClient  {
     private final HttpClient httpClient;
+    private Session session;
 
-    public ApiClient(){
+    public ApiClient(Session session){
         this.httpClient = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(10)).build();
+        this.session = session;
     }
 
     public void register(String login, String password){
@@ -39,7 +42,8 @@ public class ApiClient  {
     """, login, password);
         try {
             String response = post(Global.LOGIN_URL, json);
-            System.out.println("Response from API: " + response);
+            session.setToken(response);
+            session.setLogin(login);
         } catch (Exception e) {
             System.out.println("API call failed: " + e.getMessage());
         }
