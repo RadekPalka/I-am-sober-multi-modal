@@ -8,9 +8,7 @@ import org.example.util.InputValidator;
 import java.util.Scanner;
 
 public class RegisterScreen implements Screen{
-    private String login;
-    private String password;
-    private String userInput;
+
     private Scanner scanner;
     private ApiClient apiClient;
     
@@ -20,13 +18,13 @@ public class RegisterScreen implements Screen{
         this.apiClient = apiClient;
     }
 
-    private void getLoginFromUser(){
+    private String getLoginFromUser(){
+        String userInput;
         while (true){
             System.out.print("Enter your login: ");
             userInput = scanner.nextLine();
             if (UserValidator.isValidLogin(userInput)){
-                login = userInput;
-                break;
+                return userInput;
             }
             System.out.println("Your login is incorrect");
 
@@ -34,7 +32,8 @@ public class RegisterScreen implements Screen{
 
     }
 
-    private void getPasswordFromUser(){
+    private String getPasswordFromUser(){
+        String userInput;
         while (true){
             System.out.print("Enter your password: ");
             userInput = scanner.nextLine();
@@ -42,8 +41,7 @@ public class RegisterScreen implements Screen{
                 System.exit(0);
             }
             else if (UserValidator.isValidPassword(userInput)){
-                password = userInput;
-                break;
+                return userInput;
             }
             System.out.println("Your password is incorrect");
 
@@ -54,7 +52,8 @@ public class RegisterScreen implements Screen{
         System.out.println("Sing in");
     }
 
-    private void confirmPassword(){
+    private boolean confirmPassword(String password){
+        String userInput;
         while (true){
             System.out.print("Confirm your password: ");
             userInput = scanner.nextLine();
@@ -63,7 +62,7 @@ public class RegisterScreen implements Screen{
             }
             else if (password.equals(userInput)){
 
-                break;
+                return true;
             }
             System.out.println("Passwords do not match. Please try again.");
 
@@ -71,12 +70,8 @@ public class RegisterScreen implements Screen{
 
     }
 
-    private void clearUserData(){
-        login = null;
-        password = null;
-    }
 
-    private void sendDataToApi(){
+    private void sendDataToApi(String login, String password){
         String json = String.format("""
     {
       "username": "%s",
@@ -95,10 +90,13 @@ public class RegisterScreen implements Screen{
 
     public void init(){
         displayLabel();
-        getLoginFromUser();
-        getPasswordFromUser();
-        confirmPassword();
-        sendDataToApi();
+        String login = getLoginFromUser();
+        String password = getPasswordFromUser();
+        boolean isPasswordValid = confirmPassword(password);
+        if (login != null && password != null && isPasswordValid){
+            sendDataToApi(login, password);
+        }
+
     }
 
 }
