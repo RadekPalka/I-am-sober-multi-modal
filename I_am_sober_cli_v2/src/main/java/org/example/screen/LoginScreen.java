@@ -18,7 +18,15 @@ public class LoginScreen implements Screen{
         this.apiClient = apiClient;
     }
 
+    public void init(){
+        displayLabel();
+        String login = getLoginFromUser();
+        String password = getPasswordFromUser();
+        if (login != null && password != null){
+            apiClient.logIn(login, password);
+        }
 
+    }
 
   private void displayLabel(){
       System.out.println("Sing up");
@@ -54,16 +62,4 @@ public class LoginScreen implements Screen{
         }
     }
 
-
-
-
-    public void init(){
-        displayLabel();
-        String login = getLoginFromUser();
-        String password = getPasswordFromUser();
-        if (login != null && password != null){
-            apiClient.logIn(login, password);
-        }
-
-    }
 }

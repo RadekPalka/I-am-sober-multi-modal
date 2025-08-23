@@ -18,6 +18,17 @@ public class RegisterScreen implements Screen{
         this.apiClient = apiClient;
     }
 
+    public void init(){
+        displayLabel();
+        String login = getLoginFromUser();
+        String password = getPasswordFromUser();
+        boolean isPasswordValid = confirmPassword(password);
+        if (login != null && password != null && isPasswordValid){
+            apiClient.register(login, password);
+        }
+
+    }
+
     private String getLoginFromUser(){
         String userInput;
         while (true){
@@ -66,17 +77,6 @@ public class RegisterScreen implements Screen{
             }
             System.out.println("Passwords do not match. Please try again.");
 
-        }
-
-    }
-
-    public void init(){
-        displayLabel();
-        String login = getLoginFromUser();
-        String password = getPasswordFromUser();
-        boolean isPasswordValid = confirmPassword(password);
-        if (login != null && password != null && isPasswordValid){
-            apiClient.register(login, password);
         }
 
     }
