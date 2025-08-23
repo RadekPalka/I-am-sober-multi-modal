@@ -79,7 +79,7 @@ public class RegisterScreen implements Screen{
     }
     """, login, password);
         try {
-            String response = apiClient.post(Global.registerUrl, json);
+            String response = apiClient.post(Global.REGISTER_URL, json);
             System.out.println("Response from API: " + response);
         } catch (Exception e) {
             System.out.println("API call failed: " + e.getMessage());
