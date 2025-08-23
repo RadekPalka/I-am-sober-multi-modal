@@ -44,6 +44,7 @@ public class ApiClient  {
             String response = post(Global.LOGIN_URL, json);
             session.setToken(response);
             session.setLogin(login);
+            System.out.println("Logged in successfully");
         } catch (Exception e) {
             System.out.println("API call failed: " + e.getMessage());
         }

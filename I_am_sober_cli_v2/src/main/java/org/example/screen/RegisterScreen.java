@@ -21,6 +21,7 @@ public class RegisterScreen implements Screen{
         this.session = session;
     }
 
+    @Override
     public void init(){
         displayLabel();
         String login = getLoginFromUser();
