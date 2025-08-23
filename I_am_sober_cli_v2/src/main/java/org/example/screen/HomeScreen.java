@@ -1,7 +1,6 @@
 package org.example.screen;
 
 import org.example.util.InputValidator;
-import org.example.util.ScreenManager;
 
 import java.util.Scanner;
 
@@ -47,10 +46,10 @@ public class HomeScreen implements Screen{
     private void checkUserOption(String option){
         switch (option.toLowerCase().trim()){
             case "r":
-                ScreenManager.initScreen(registerScreen);
+                registerScreen.init();
                 break;
             case "l":
-                ScreenManager.initScreen(loginScreen);
+                loginScreen.init();
                 break;
             case "e":
                 System.exit(0);
