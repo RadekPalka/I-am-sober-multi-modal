@@ -70,31 +70,13 @@ public class RegisterScreen implements Screen{
 
     }
 
-
-    private void sendDataToApi(String login, String password){
-        String json = String.format("""
-    {
-      "username": "%s",
-      "password": "%s"
-    }
-    """, login, password);
-        try {
-            String response = apiClient.post(Global.REGISTER_URL, json);
-            System.out.println("Response from API: " + response);
-        } catch (Exception e) {
-            System.out.println("API call failed: " + e.getMessage());
-        }
-    }
-
-
-
     public void init(){
         displayLabel();
         String login = getLoginFromUser();
         String password = getPasswordFromUser();
         boolean isPasswordValid = confirmPassword(password);
         if (login != null && password != null && isPasswordValid){
-            sendDataToApi(login, password);
+            apiClient.register(login, password);
         }
 
     }

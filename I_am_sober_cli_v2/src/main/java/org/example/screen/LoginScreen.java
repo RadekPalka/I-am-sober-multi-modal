@@ -8,9 +8,7 @@ import org.example.util.InputValidator;
 import java.util.Scanner;
 
 public class LoginScreen implements Screen{
-    private String login;
-    private String password;
-    private String userInput;
+
     private Scanner scanner;
     private ApiClient apiClient;
 
@@ -26,13 +24,13 @@ public class LoginScreen implements Screen{
       System.out.println("Sing up");
   }
 
-    private void getLoginFromUser(){
+    private String getLoginFromUser(){
+        String userInput;
         while (true){
             System.out.print("Enter your login: ");
             userInput = scanner.nextLine();
             if (UserValidator.isValidLogin(userInput)){
-                login = userInput;
-                break;
+                return userInput;
             }
             System.out.println("Your login is incorrect");
 
@@ -40,7 +38,8 @@ public class LoginScreen implements Screen{
 
     }
 
-    private void getPasswordFromUser(){
+    private String getPasswordFromUser(){
+        String userInput;
         while (true){
             System.out.print("Enter your password: ");
             userInput = scanner.nextLine();
@@ -48,39 +47,23 @@ public class LoginScreen implements Screen{
                 System.exit(0);
             }
             else if (UserValidator.isValidPassword(userInput)){
-                password = userInput;
-                break;
+                return userInput;
             }
             System.out.println("Your password is incorrect");
 
         }
     }
 
-    private void clearUserData(){
-        login = null;
-        password = null;
-    }
 
-    private void sendDataToApi(){
-        String json = String.format("""
-    {
-      "username": "%s",
-      "password": "%s"
-    }
-    """, login, password);
-        try {
-            String response = apiClient.post(Global.loginUrl, json);
-            System.out.println("Response from API: " + response);
-        } catch (Exception e) {
-            System.out.println("API call failed: " + e.getMessage());
-        }
-    }
+
 
     public void init(){
         displayLabel();
-        getLoginFromUser();
-        getPasswordFromUser();
-        sendDataToApi();
+        String login = getLoginFromUser();
+        String password = getPasswordFromUser();
+        if (login != null && password != null){
+            apiClient.logIn(login, password);
+        }
 
     }
 }
