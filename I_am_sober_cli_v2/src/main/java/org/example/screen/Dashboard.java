@@ -17,11 +17,17 @@ public class Dashboard implements Screen{
     }
 
     @Override
-    public void init(){
+    public void init()  {
         greet();
+        apiClient.getPaginatedAddictions(session.getToken(), 0);
+
     }
 
     private void greet(){
         System.out.println("Welcome " + session.getLogin());
+        System.out.println("Choose your option");
+
     }
+
+
 }

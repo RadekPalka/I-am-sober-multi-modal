@@ -5,10 +5,11 @@ import com.example.auth.Session;
 import com.example.client.ApiClient;
 import org.example.screen.*;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         Scanner scanner = new Scanner(System.in);
         Session session = new Session();
         ApiClient apiClient = new ApiClient(session);

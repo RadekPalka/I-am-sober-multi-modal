@@ -2,6 +2,7 @@ package org.example.screen;
 
 import org.example.util.InputValidator;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 public class HomeScreen implements Screen{
@@ -43,7 +44,7 @@ public class HomeScreen implements Screen{
         return option;
     }
 
-    private void checkUserOption(String option){
+    private void checkUserOption(String option) {
         switch (option.toLowerCase().trim()){
             case "r":
                 registerScreen.init();
@@ -61,7 +62,7 @@ public class HomeScreen implements Screen{
 
 
     @Override
-    public void init(){
+    public void init() {
         displayGreeting();
         showMenu();
         String option = getOptionFromUser();
