@@ -3,13 +3,8 @@ package com.example.client;
 import com.example.auth.Session;
 import com.example.global.Global;
 import org.json.JSONObject;
-
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URL;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
