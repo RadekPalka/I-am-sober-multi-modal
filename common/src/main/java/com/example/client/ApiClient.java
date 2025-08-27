@@ -1,7 +1,11 @@
 package com.example.client;
 
+import com.example.addictions.AddictionRepository;
+import com.example.addictions.dto.AddictionDto;
 import com.example.auth.Session;
 import com.example.global.Global;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONObject;
 import java.io.IOException;
 import java.net.URI;
@@ -9,19 +13,20 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
+import java.util.List;
 import java.util.Map;
 
 public class ApiClient  {
-    private final HttpClient http;
+    private HttpClient http;
     private Session session;
+    private ObjectMapper json;
+    private AddictionRepository repo;
 
-    public ApiClient(Session session){
+    public ApiClient(Session session, HttpClient http, ObjectMapper json, AddictionRepository repo){
         this.session = session;
-        this.http = HttpClient.newBuilder()
-                .version(HttpClient.Version.HTTP_2)
-                .connectTimeout(Duration.ofSeconds(10))
-                .followRedirects(HttpClient.Redirect.NEVER)
-                .build();
+        this.http = http;
+        this.json = json;
+        this.repo = repo;
     }
 
     public void register(String login, String password){
@@ -70,12 +75,16 @@ public class ApiClient  {
             String url = Global.PAGINATED_ADDICTIONS_URL + "?page=" + pageNumber;
 
             HttpResponse<String> res = get(url, Map.of(
-                    "Authorization", token.trim(),         // u Ciebie: BEZ "Bearer"
+                    "Authorization", token.trim(),
                     "Accept", "application/json"
             ));
 
             System.out.println("STATUS: " + res.statusCode());
             System.out.println("BODY: " + res.body());
+            repo.setAddictions(json.readValue(res.body(), new TypeReference<List<AddictionDto>>() {
+            }));
+
+
         } catch (Exception e) {
             System.out.println("API call failed: " + e.getMessage());
         }
