@@ -12,7 +12,6 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 
@@ -30,27 +29,31 @@ public class ApiClient  {
     }
 
     public void register(String login, String password){
-        String json = String.format("""
-    {
-      "username": "%s",
-      "password": "%s"
-    }
-    """, login, password);
+
+        String json = """
+        {
+          "username": "%s",
+          "password": "%s"
+        }
+        """.formatted(login, password);
+
         try {
             HttpResponse<String> response = post(Global.REGISTER_URL, json);
-            System.out.println("Response from API: " + response.body());
+            System.out.println("Your account have created successfully");
         } catch (Exception e) {
-            System.out.println("API call failed: " + e.getMessage());
+            System.out.print("Something goes wrong. Please try again");
+            e.printStackTrace();
+
         }
     }
 
     public void logIn(String login, String password){
-        String json = String.format("""
-    {
-      "username": "%s",
-      "password": "%s"
-    }
-    """, login, password);
+        String json = """
+        {
+          "username": "%s",
+          "password": "%s"
+        }
+        """.formatted(login, password);
         try {
             HttpResponse<String> response = post(Global.LOGIN_URL, json);
             if (response.statusCode() == 200) {
@@ -62,11 +65,13 @@ public class ApiClient  {
             } else if (response.statusCode() == 401) {
                 System.out.println("Invalid credentials");
             } else {
-                System.out.println("Login failed. Status: " + response.statusCode());
-                System.out.println("Response: " + response.body());
+                System.out.println("Login failed");
+
             }
         } catch (Exception e) {
-            System.out.println("API call failed: " + e.getMessage());
+            System.out.println("API call failed");
+            e.printStackTrace();
+
         }
     }
 
@@ -86,7 +91,8 @@ public class ApiClient  {
 
 
         } catch (Exception e) {
-            System.out.println("API call failed: " + e.getMessage());
+            System.out.println("API call failed");
+            e.printStackTrace();
         }
     }
 
