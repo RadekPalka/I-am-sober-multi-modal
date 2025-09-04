@@ -5,12 +5,12 @@ import com.example.client.ApiClient;
 
 import java.util.Scanner;
 
-public class Dashboard implements Screen{
+public class DashboardScreen implements Screen{
     private Scanner scanner;
     private ApiClient apiClient;
     private Session session;
 
-    public Dashboard(Scanner scanner, ApiClient apiClient, Session session){
+    public DashboardScreen(Scanner scanner, ApiClient apiClient, Session session){
         this.scanner = scanner;
         this.apiClient = apiClient;
         this.session = session;

@@ -25,7 +25,7 @@ public class Main {
 
         Screen registerScreen = new RegisterScreen(scanner, apiClient, session);
         Screen loginScreen = new LoginScreen(scanner, apiClient, session);
-        Screen dashboard = new Dashboard(scanner, apiClient, session);
+        Screen dashboard = new DashboardScreen(scanner, apiClient, session);
         HomeScreen homeScreen = new HomeScreen(scanner, registerScreen, loginScreen);
 
         if (session.getLogin() == null){
