@@ -6,8 +6,14 @@ import java.time.Instant;
 public class AddictionDto {
     private int id;
     private String name;
-    private BigDecimal costPerDay;
+    private float costPerDay;
     private String deadline;
     private Instant detoxStartDate;
 
+    public String getName(){
+        return name;
+    }
+    public float getCostPerDay(){
+        return costPerDay;
+    }
 }

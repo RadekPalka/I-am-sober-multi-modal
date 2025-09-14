@@ -1,6 +1,5 @@
 package com.example.client;
 
-import com.example.addictions.AddictionRepository;
 import com.example.addictions.dto.AddictionDto;
 import com.example.auth.Session;
 import com.example.global.Global;
@@ -12,20 +11,17 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ApiClient  {
     private HttpClient http;
     private Session session;
     private ObjectMapper json;
-    private AddictionRepository repo;
 
-    public ApiClient(Session session, HttpClient http, ObjectMapper json, AddictionRepository repo){
+    public ApiClient(Session session, HttpClient http, ObjectMapper json) {
         this.session = session;
         this.http = http;
         this.json = json;
-        this.repo = repo;
     }
 
     public void register(String login, String password){
@@ -75,7 +71,7 @@ public class ApiClient  {
         }
     }
 
-    public void getPaginatedAddictions(String token, int pageNumber) {
+    public List<AddictionDto> getPaginatedAddictions(String token, int pageNumber) {
         try {
             String url = Global.PAGINATED_ADDICTIONS_URL + "?page=" + pageNumber;
 
@@ -83,17 +79,14 @@ public class ApiClient  {
                     "Authorization", token.trim(),
                     "Accept", "application/json"
             ));
-
-            System.out.println("STATUS: " + res.statusCode());
-            System.out.println("BODY: " + res.body());
-            repo.setAddictions(json.readValue(res.body(), new TypeReference<List<AddictionDto>>() {
-            }));
-
+            return new ArrayList<>(json.readValue(res.body(), new TypeReference<List<AddictionDto>>() {}));
 
         } catch (Exception e) {
             System.out.println("API call failed");
             e.printStackTrace();
+            return Collections.emptyList();
         }
+
     }
 
 

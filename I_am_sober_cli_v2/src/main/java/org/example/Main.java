@@ -1,7 +1,6 @@
 package org.example;
 
 
-import com.example.addictions.AddictionRepository;
 import com.example.auth.Session;
 import com.example.client.ApiClient;
 import com.example.client.HttpClients;
@@ -19,9 +18,9 @@ public class Main {
         Session session = new Session();
         HttpClient http = HttpClients.defaultClient();
         ObjectMapper json = Jsons.defaultMapper();
-        AddictionRepository repo = new AddictionRepository();
 
-        ApiClient apiClient = new ApiClient(session, http, json, repo);
+
+        ApiClient apiClient = new ApiClient(session, http, json);
 
         Screen registerScreen = new RegisterScreen(scanner, apiClient, session);
         Screen loginScreen = new LoginScreen(scanner, apiClient, session);

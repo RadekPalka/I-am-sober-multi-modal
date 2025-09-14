@@ -27,7 +27,7 @@ public class RegisterScreen implements Screen{
         String login = getLoginFromUser();
         String password = getPasswordFromUser();
         boolean isPasswordValid = confirmPassword(password);
-        if (login != null && password != null && isPasswordValid){
+        if (isPasswordValid){
             apiClient.register(login, password);
         }
 
