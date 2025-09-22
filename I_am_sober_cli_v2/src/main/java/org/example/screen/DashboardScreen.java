@@ -25,12 +25,16 @@ public class DashboardScreen implements Screen{
         greet();
         addictionDtoList = apiClient.getPaginatedAddictions(session.getToken(), 0);
         printAddictions();
+        String option = askUserForOption();
+        if (isNumeric(option)){
+            int addictionNumber = Integer.parseInt(option);
 
+        }
     }
 
     private void greet(){
         System.out.println("Welcome " + session.getLogin());
-        System.out.println("Choose your option");
+
 
     }
 
@@ -39,12 +43,25 @@ public class DashboardScreen implements Screen{
             System.out.println("You have no addictions");
         }
         else{
+            System.out.println("Your addiction:");
             for (int i = 0; i< addictionDtoList.size(); i++){
                 AddictionDto addictionDto = addictionDtoList.get(i);
                 System.out.printf("%d-> %s, daily cost: %.2f%n PLN", i+1, addictionDto.getName(), addictionDto.getCostPerDay());
             }
+
         }
     }
+
+    private String askUserForOption(){
+        System.out.println("Type number of addiction to see a details:");
+        return scanner.nextLine();
+    }
+
+    public static boolean isNumeric(String input) {
+        return input.matches("\\d+");
+    }
+
+
 
 
 }
