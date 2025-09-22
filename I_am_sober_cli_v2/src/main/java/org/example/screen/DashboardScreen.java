@@ -41,7 +41,7 @@ public class DashboardScreen implements Screen{
         else{
             for (int i = 0; i< addictionDtoList.size(); i++){
                 AddictionDto addictionDto = addictionDtoList.get(i);
-                System.out.printf("%d-> %s, daily cost- %.2f%n", i+1, addictionDto.getName(), addictionDto.getCostPerDay());
+                System.out.printf("%d-> %s, daily cost: %.2f%n PLN", i+1, addictionDto.getName(), addictionDto.getCostPerDay());
             }
         }
     }
