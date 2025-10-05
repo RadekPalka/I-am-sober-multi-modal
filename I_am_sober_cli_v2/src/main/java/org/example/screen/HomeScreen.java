@@ -33,15 +33,15 @@ public class HomeScreen implements Screen{
 
 
     private String getOptionFromUser(){
-        String option;
+        String input;
         do{
-            option = scanner.nextLine().trim();
-            if (!InputValidator.isValidMainMenuOption(option)){
-                System.out.println("Choose correct option");
+            input = scanner.nextLine().trim();
+            if (!InputValidator.isValidMainMenuOption(input)){
+                System.out.println("Choose correct input");
                 showMenu();
             }
-        }while(!InputValidator.isValidMainMenuOption(option));
-        return option;
+        }while(!InputValidator.isValidMainMenuOption(input));
+        return input;
     }
 
     private void checkUserOption(String option) {

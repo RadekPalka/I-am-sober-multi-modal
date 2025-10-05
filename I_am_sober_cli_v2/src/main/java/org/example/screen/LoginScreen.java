@@ -37,46 +37,43 @@ public class LoginScreen implements Screen{
   }
 
     private String getLoginFromUser(){
-        String userInput;
         while (true){
             System.out.print("Enter your login: ");
-            userInput = scanner.nextLine();
-            if (UserValidator.isUserInputValid(userInput)){
-                return userInput;
+            String input = scanner.nextLine();
+            if (UserValidator.isUserInputValid(input)){
+                return input;
             }
-            System.out.println("Your login must have five characters");
+            System.out.println("Your login must have at least five characters");
 
         }
 
     }
 
     private String getPasswordFromUser(){
-        String userInput;
         while (true){
             System.out.print("Enter your password: ");
-            userInput = scanner.nextLine();
-            if (InputValidator.isQuitCommand(userInput)){
+            String input = scanner.nextLine();
+            if (InputValidator.isQuitCommand(input)){
                 System.exit(0);
             }
-            else if (UserValidator.isUserInputValid(userInput)){
-                return userInput;
+            else if (UserValidator.isUserInputValid(input)){
+                return input;
             }
-            System.out.println("Your must have five characters");
+            System.out.println("Your must have at least five characters");
 
         }
     }
 
     private boolean promptRememberSession(){
-        String userInput;
         System.out.print("Remember me y/n (default n):");
-        userInput = scanner.nextLine();
-        if (InputValidator.isQuitCommand(userInput)){
+         String input = scanner.nextLine();
+        if (InputValidator.isQuitCommand(input)){
             System.exit(0);
         }
-        else if(userInput.equalsIgnoreCase("y")){
+        else if(input.equalsIgnoreCase("y")){
             return true;
         }
-        else if(!userInput.equalsIgnoreCase("n")){
+        else if(!input.equalsIgnoreCase("n")){
             System.out.println("Wrong character. I am staying with default value");
         }
 
