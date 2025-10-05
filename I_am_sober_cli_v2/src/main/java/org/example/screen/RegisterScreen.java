@@ -38,10 +38,10 @@ public class RegisterScreen implements Screen{
         while (true){
             System.out.print("Enter your login: ");
             userInput = scanner.nextLine();
-            if (UserValidator.isValidLogin(userInput)){
+            if (UserValidator.isUserInputValid(userInput)){
                 return userInput;
             }
-            System.out.println("Your login is incorrect");
+            System.out.println("Your login must have five characters");
 
         }
 
@@ -55,10 +55,10 @@ public class RegisterScreen implements Screen{
             if (InputValidator.isQuitCommand(userInput)){
                 System.exit(0);
             }
-            else if (UserValidator.isValidPassword(userInput)){
+            else if (UserValidator.isUserInputValid(userInput)){
                 return userInput;
             }
-            System.out.println("Your password is incorrect");
+            System.out.println("Your password must have five characters");
 
         }
     }
