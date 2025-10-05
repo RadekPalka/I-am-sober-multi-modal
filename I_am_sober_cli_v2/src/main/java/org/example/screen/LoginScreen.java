@@ -66,6 +66,23 @@ public class LoginScreen implements Screen{
         }
     }
 
+    private boolean promptRememberSession(){
+        String userInput;
+        System.out.print("Remember me y/n (default n):");
+        userInput = scanner.nextLine();
+        if (InputValidator.isQuitCommand(userInput)){
+            System.exit(0);
+        }
+        else if(userInput.equalsIgnoreCase("y")){
+            return true;
+        }
+        else if(!userInput.equalsIgnoreCase("n")){
+            System.out.println("Wrong character. I am staying with default value");
+        }
+
+        return false;
+    }
+
 
 
 }
