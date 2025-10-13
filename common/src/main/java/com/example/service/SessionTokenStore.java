@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
+import java.util.Optional;
 
 public class SessionTokenStore {
     public static String os = System.getProperty("os.name").toLowerCase();
@@ -43,8 +44,21 @@ public class SessionTokenStore {
 
     }
 
-    public static String loadToken() throws IOException {
-        Path file = resolveTokenPath();
-        return Files.readString(file);
+    public static Optional<String> loadToken() {
+
+        try{
+            Path file = resolveTokenPath();
+            if (!Files.exists(file)){
+                return Optional.empty();
+            }
+            String token = Files.readString(file).trim();
+            if (token.isEmpty()){
+                return Optional.empty();
+            }
+            return Optional.of(token);
+
+        } catch (IOException ignored) {
+            return Optional.empty();
+        }
     }
 }

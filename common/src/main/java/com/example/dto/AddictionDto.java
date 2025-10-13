@@ -1,4 +1,4 @@
-package com.example.addictions.dto;
+package com.example.dto;
 
 import java.time.Instant;
 

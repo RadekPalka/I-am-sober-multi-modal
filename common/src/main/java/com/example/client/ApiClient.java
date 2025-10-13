@@ -1,7 +1,8 @@
 package com.example.client;
 
-import com.example.addictions.dto.AddictionDto;
+import com.example.dto.AddictionDto;
 import com.example.auth.Session;
+import com.example.dto.UserDto;
 import com.example.global.Global;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -70,6 +71,38 @@ public class ApiClient  {
 
         }
     }
+
+    public Optional<UserDto> fetchUser(String token) {
+        if (token == null || token.isBlank()) return Optional.empty();
+
+        try {
+            String url = Global.USER_DETAILS;
+
+            HttpResponse<String> res = get(
+                    url,
+                    Map.of(
+                            "Authorization", token.trim(),
+                            "Accept", "application/json"
+                    )
+            );
+
+            int code = res.statusCode();
+            if (code == 200) {
+                UserDto user = json.readValue(res.body(), UserDto.class);
+                return Optional.of(user);
+            } else if (code == 401 || code == 403) {
+                return Optional.empty();
+            } else {
+                System.err.println("fetchUser: HTTP " + code);
+                return Optional.empty();
+            }
+        } catch (IOException | InterruptedException e) {
+            System.err.println("fetchUser failed: " + e.getMessage());
+            return Optional.empty();
+        }
+    }
+
+
 
     public List<AddictionDto> getPaginatedAddictions(String token, int pageNumber) {
         try {

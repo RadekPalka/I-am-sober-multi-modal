@@ -1,6 +1,6 @@
 package org.example.screen;
 
-import com.example.addictions.dto.AddictionDto;
+import com.example.dto.AddictionDto;
 import com.example.auth.Session;
 import com.example.client.ApiClient;
 
