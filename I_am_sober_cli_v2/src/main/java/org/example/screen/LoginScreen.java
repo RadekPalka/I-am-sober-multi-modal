@@ -2,10 +2,11 @@ package org.example.screen;
 
 import com.example.auth.Session;
 import com.example.client.ApiClient;
-import com.example.global.Global;
+import com.example.service.SessionTokenStore;
 import com.example.util.UserValidator;
 import org.example.util.InputValidator;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 public class LoginScreen implements Screen{
@@ -22,12 +23,15 @@ public class LoginScreen implements Screen{
     }
 
     @Override
-    public void init(){
+    public void init() {
         displayLabel();
         String login = getLoginFromUser();
         String password = getPasswordFromUser();
         if (login != null && password != null){
             apiClient.logIn(login, password);
+        }
+        if (promptRememberSession()){
+            SessionTokenStore.saveToken(session.getToken());
         }
 
     }

@@ -31,11 +31,16 @@ public class SessionTokenStore {
         }
     }
 
-    public static void saveToken(String token) throws IOException {
-        Path file = resolveTokenPath();
-        Files.createDirectories(file.getParent());
+    public static void saveToken(String token){
+        try{
+            Path file = resolveTokenPath();
+            Files.createDirectories(file.getParent());
+            System.out.println("Saving token to: " + file.toAbsolutePath());
+            mapper.writeValue(file.toFile(), Map.of("sessionToken", token));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
-        mapper.writeValue(file.toFile(), Map.of("sessionToken", token));
     }
 
     public static String loadToken() throws IOException {
