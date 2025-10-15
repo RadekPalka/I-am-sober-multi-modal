@@ -1,5 +1,6 @@
 package com.example.service;
 
+import com.example.dto.TokenDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
@@ -51,8 +52,13 @@ public class SessionTokenStore {
             if (!Files.exists(file)){
                 return Optional.empty();
             }
-            String token = Files.readString(file).trim();
-            if (token.isEmpty()){
+            String json= Files.readString(file);
+            if (json.isEmpty()){
+                return Optional.empty();
+            }
+            TokenDto tokenDto = mapper.readValue(json, TokenDto.class);
+            String token = tokenDto.getSessionToken();
+            if (token == null || token.isBlank()) {
                 return Optional.empty();
             }
             return Optional.of(token);
