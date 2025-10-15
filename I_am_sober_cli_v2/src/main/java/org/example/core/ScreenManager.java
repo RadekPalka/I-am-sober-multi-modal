@@ -2,19 +2,18 @@ package org.example.core;
 
 import com.example.auth.Session;
 import com.example.client.ApiClient;
-import com.example.dto.UserDto;
 import com.example.service.SessionTokenStore;
-import org.example.screen.DashboardScreen;
-import org.example.screen.HomeScreen;
+import org.example.screen.Screen;
+
 import java.util.Optional;
 
 public class ScreenManager {
-    private HomeScreen homeScreen;
-    private DashboardScreen dashboardScreen;
+    private Screen homeScreen;
+    private Screen dashboardScreen;
     private Session session;
     private ApiClient apiClient;
 
-    public ScreenManager(HomeScreen homeScreen, DashboardScreen dashboardScreen, Session session, ApiClient apiClient) {
+    public ScreenManager(Screen homeScreen, Screen dashboardScreen, Session session, ApiClient apiClient) {
         this.homeScreen = homeScreen;
         this.dashboardScreen = dashboardScreen;
         this.session = session;

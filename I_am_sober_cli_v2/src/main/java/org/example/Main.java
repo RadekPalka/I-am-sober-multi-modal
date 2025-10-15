@@ -6,6 +6,7 @@ import com.example.client.ApiClient;
 import com.example.client.HttpClients;
 import com.example.json.Jsons;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.example.core.ScreenManager;
 import org.example.screen.*;
 
 import java.io.IOException;
@@ -25,15 +26,10 @@ public class Main {
         Screen registerScreen = new RegisterScreen(scanner, apiClient, session);
         Screen loginScreen = new LoginScreen(scanner, apiClient, session);
         Screen dashboard = new DashboardScreen(scanner, apiClient, session);
-        HomeScreen homeScreen = new HomeScreen(scanner, registerScreen, loginScreen);
+        Screen homeScreen = new HomeScreen(scanner, registerScreen, loginScreen);
 
-        if (session.getLogin() == null){
-            homeScreen.init();
-        }
-        if (session.getLogin() != null){
-            dashboard.init();
-        }
-
+        ScreenManager screenManager = new ScreenManager(homeScreen, dashboard, session, apiClient);
+        screenManager.decideInitialScreen();
 
     }
 }
