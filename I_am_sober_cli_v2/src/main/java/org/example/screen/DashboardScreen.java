@@ -3,6 +3,7 @@ package org.example.screen;
 import com.example.dto.AddictionDto;
 import com.example.auth.Session;
 import com.example.client.ApiClient;
+import com.example.service.SessionTokenStore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,11 +25,14 @@ public class DashboardScreen implements Screen{
     public void init()  {
         greet();
         addictionDtoList = apiClient.getPaginatedAddictions(session.getToken(), 0);
-        printAddictions();
+        showMenu();
         String option = askUserForOption();
         if (isNumeric(option)){
             int addictionNumber = Integer.parseInt(option);
 
+        }
+        else if(option.equalsIgnoreCase("l")){
+            logout();
         }
     }
 
@@ -38,7 +42,7 @@ public class DashboardScreen implements Screen{
 
     }
 
-    private void printAddictions(){
+    private void showMenu(){
         if (addictionDtoList.isEmpty()){
             System.out.println("You have no addictions");
         }
@@ -48,6 +52,7 @@ public class DashboardScreen implements Screen{
                 AddictionDto addictionDto = addictionDtoList.get(i);
                 System.out.printf("%d-> %s, daily cost: %.2f%n PLN%n", i+1, addictionDto.getName(), addictionDto.getCostPerDay());
             }
+            System.out.println("Or press 'l' for logout");
 
         }
     }
@@ -57,11 +62,20 @@ public class DashboardScreen implements Screen{
         return scanner.nextLine();
     }
 
-    public static boolean isNumeric(String input) {
+    private boolean isNumeric(String input) {
         return input.matches("\\d+");
     }
 
+    private void logout(){
+        String token = session.getToken();
 
+        if(apiClient.logout(token)){
+            SessionTokenStore.clearToken();
+            session.clearUserCreditials();
+            addictionDtoList.clear();
+
+        }
+    }
 
 
 }

@@ -122,6 +122,31 @@ public class ApiClient  {
 
     }
 
+    public boolean logout(String token){
+        String json = """
+        {
+          "sessionToken": "%s"
+        }
+        """.formatted(token);
+        try {
+            HttpResponse<String> response = post(Global.LOGOUT_URL, json);
+            if (response.statusCode() == 200) {
+                System.out.println("Logged out successfully");
+                return true;
+            } else if (response.statusCode() == 401) {
+                System.out.println("Invalid credentials");
+            } else {
+                System.out.println("Logged out failed");
+
+            }
+        } catch (Exception e) {
+            System.out.println("API call failed");
+            e.printStackTrace();
+
+        }
+        return false;
+    }
+
 
     private HttpResponse<String> get(String url, Map<String, String> headers)
             throws IOException, InterruptedException {
