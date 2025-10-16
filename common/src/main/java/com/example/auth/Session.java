@@ -21,7 +21,7 @@ public class Session {
         this.login = login;
     }
 
-    public void clearUserCreditials(){
+    public void clearUserCredentials(){
         login = null;
         token = null;
     }

@@ -14,11 +14,13 @@ public class DashboardScreen implements Screen{
     private ApiClient apiClient;
     private Session session;
     private List<AddictionDto> addictionDtoList =  new ArrayList<>();
+    private Screen loginScreen;
 
-    public DashboardScreen(Scanner scanner, ApiClient apiClient, Session session){
+    public DashboardScreen(Scanner scanner, ApiClient apiClient, Session session, Screen loginScreen){
         this.scanner = scanner;
         this.apiClient = apiClient;
         this.session = session;
+        this.loginScreen = loginScreen;
     }
 
     @Override
@@ -71,8 +73,9 @@ public class DashboardScreen implements Screen{
 
         if(apiClient.logout(token)){
             SessionTokenStore.clearToken();
-            session.clearUserCreditials();
+            session.clearUserCredentials();
             addictionDtoList.clear();
+            loginScreen.init();
 
         }
     }

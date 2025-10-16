@@ -25,7 +25,7 @@ public class Main {
 
         Screen registerScreen = new RegisterScreen(scanner, apiClient, session);
         Screen loginScreen = new LoginScreen(scanner, apiClient, session);
-        Screen dashboard = new DashboardScreen(scanner, apiClient, session);
+        Screen dashboard = new DashboardScreen(scanner, apiClient, session, loginScreen);
         Screen homeScreen = new HomeScreen(scanner, registerScreen, loginScreen);
 
         ScreenManager screenManager = new ScreenManager(homeScreen, dashboard, session, apiClient);
