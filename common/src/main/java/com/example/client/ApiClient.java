@@ -17,24 +17,23 @@ import java.util.*;
 public class ApiClient  {
     private HttpClient http;
     private Session session;
-    private ObjectMapper json;
+    private ObjectMapper objectMapper;
 
     public ApiClient(Session session, HttpClient http, ObjectMapper json) {
         this.session = session;
         this.http = http;
-        this.json = json;
+        this.objectMapper = json;
     }
 
     public void register(String login, String password){
 
-        String json = """
-        {
-          "username": "%s",
-          "password": "%s"
-        }
-        """.formatted(login, password);
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("username", login);
+        requestBody.put("password", password);
+
 
         try {
+            String json = objectMapper.writeValueAsString(requestBody);
             HttpResponse<String> response = post(Global.REGISTER_URL, json);
             System.out.println("Your account have created successfully");
         } catch (Exception e) {
@@ -45,13 +44,13 @@ public class ApiClient  {
     }
 
     public void logIn(String login, String password){
-        String json = """
-        {
-          "username": "%s",
-          "password": "%s"
-        }
-        """.formatted(login, password);
+
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("username", login);
+        requestBody.put("password", password);
+
         try {
+            String json = objectMapper.writeValueAsString(requestBody);
             HttpResponse<String> response = post(Global.LOGIN_URL, json);
             if (response.statusCode() == 200) {
                 JSONObject obj = new JSONObject(response.body());
@@ -73,7 +72,9 @@ public class ApiClient  {
     }
 
     public Optional<UserDto> fetchUser(String token) {
-        if (token == null || token.isBlank()) return Optional.empty();
+        if (token == null || token.isBlank()) {
+            return Optional.empty();
+        }
 
         try {
             String url = Global.USER_DETAILS;
@@ -88,7 +89,7 @@ public class ApiClient  {
 
             int code = res.statusCode();
             if (code == 200) {
-                UserDto user = json.readValue(res.body(), UserDto.class);
+                UserDto user = objectMapper.readValue(res.body(), UserDto.class);
                 return Optional.of(user);
             } else if (code == 401 || code == 403) {
                 return Optional.empty();
@@ -112,7 +113,7 @@ public class ApiClient  {
                     "Authorization", token.trim(),
                     "Accept", "application/json"
             ));
-            return new ArrayList<>(json.readValue(res.body(), new TypeReference<List<AddictionDto>>() {}));
+            return new ArrayList<>(objectMapper.readValue(res.body(), new TypeReference<List<AddictionDto>>() {}));
 
         } catch (Exception e) {
             System.out.println("API call failed");
@@ -123,12 +124,11 @@ public class ApiClient  {
     }
 
     public boolean logout(String token){
-        String json = """
-        {
-          "sessionToken": "%s"
-        }
-        """.formatted(token);
+
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("sessionToken", token);
         try {
+            String json = objectMapper.writeValueAsString(requestBody);
             HttpResponse<String> response = post(Global.LOGOUT_URL, json);
             if (response.statusCode() == 200) {
                 System.out.println("Logged out successfully");
