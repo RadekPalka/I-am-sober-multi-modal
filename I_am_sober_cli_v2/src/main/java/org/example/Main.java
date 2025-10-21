@@ -5,6 +5,7 @@ import com.example.auth.Session;
 import com.example.client.ApiClient;
 import com.example.client.HttpClients;
 import com.example.json.Jsons;
+import com.example.routing.Route;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.core.ScreenManager;
 import org.example.screen.*;
@@ -19,17 +20,20 @@ public class Main {
         Session session = new Session();
         HttpClient http = HttpClients.defaultClient();
         ObjectMapper json = Jsons.defaultMapper();
-
-
         ApiClient apiClient = new ApiClient(session, http, json);
 
-        Screen registerScreen = new RegisterScreen(scanner, apiClient, session);
+        Screen registerScreen = new RegisterScreen(scanner, apiClient);
         Screen loginScreen = new LoginScreen(scanner, apiClient, session);
-        Screen dashboard = new DashboardScreen(scanner, apiClient, session, loginScreen);
-        Screen homeScreen = new HomeScreen(scanner, registerScreen, loginScreen);
+        Screen dashboard = new DashboardScreen(scanner, apiClient, session);
+        Screen homeScreen = new HomeScreen(scanner);
 
-        ScreenManager screenManager = new ScreenManager(homeScreen, dashboard, session, apiClient);
-        screenManager.decideInitialScreen();
+        ScreenManager screenManager = new ScreenManager(session, apiClient);
+        screenManager.register(Route.HOME, homeScreen);
+        screenManager.register(Route.LOGIN, loginScreen);
+        screenManager.register(Route.REGISTER, registerScreen);
+        screenManager.register(Route.DASHBOARD, dashboard);
+
+        screenManager.runApp();
 
     }
 }

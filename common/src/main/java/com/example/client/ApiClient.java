@@ -6,7 +6,6 @@ import com.example.dto.UserDto;
 import com.example.global.Global;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.json.JSONObject;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -43,7 +42,7 @@ public class ApiClient  {
         }
     }
 
-    public void logIn(String login, String password){
+    public Optional<HttpResponse<String>> logIn(String login, String password){
 
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("username", login);
@@ -52,23 +51,15 @@ public class ApiClient  {
         try {
             String json = objectMapper.writeValueAsString(requestBody);
             HttpResponse<String> response = post(Global.LOGIN_URL, json);
-            if (response.statusCode() == 200) {
-                JSONObject obj = new JSONObject(response.body());
-                String token = obj.getString("sessionToken");
-                session.setToken(token);
-                session.setLogin(login);
-                System.out.println("Logged in successfully");
-            } else if (response.statusCode() == 401) {
-                System.out.println("Invalid credentials");
-            } else {
-                System.out.println("Login failed");
+            return Optional.of(response);
 
-            }
         } catch (Exception e) {
             System.out.println("API call failed");
             e.printStackTrace();
+            return Optional.empty();
 
         }
+
     }
 
     public Optional<UserDto> fetchUser(String token) {

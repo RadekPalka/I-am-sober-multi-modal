@@ -1,5 +1,6 @@
 package org.example.screen;
 
+import com.example.routing.Route;
 import org.example.util.InputValidator;
 
 import java.io.IOException;
@@ -7,15 +8,11 @@ import java.util.Scanner;
 
 public class HomeScreen implements Screen{
     private Scanner scanner;
-    private Screen registerScreen;
-    private Screen loginScreen;
 
 
-    public HomeScreen(Scanner scanner, Screen registerScreen, Screen loginScreen){
+    public HomeScreen(Scanner scanner){
 
         this.scanner = scanner;
-        this.registerScreen = registerScreen;
-        this.loginScreen = loginScreen;
     }
 
 
@@ -44,28 +41,26 @@ public class HomeScreen implements Screen{
         return input;
     }
 
-    private void checkUserOption(String option) {
+    private Route checkUserOption(String option) {
         switch (option.toLowerCase().trim()){
             case "r":
-                registerScreen.init();
-                break;
+                return Route.REGISTER;
             case "l":
-                loginScreen.init();
-                break;
+                return Route.LOGIN;
             case "e":
-                System.exit(0);
-                break;
-
+                return Route.EXIT;
+            default:
+                return Route.HOME;
         }
     }
 
 
 
     @Override
-    public void init() {
+    public Route init() {
         displayGreeting();
         showMenu();
         String option = getOptionFromUser();
-        checkUserOption(option);
+        return checkUserOption(option);
     }
 }

@@ -1,7 +1,7 @@
 package org.example.screen;
 
-import java.io.IOException;
+import com.example.routing.Route;
 
 public interface Screen {
-    public void init();
+    public Route init();
 }

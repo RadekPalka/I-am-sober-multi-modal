@@ -3,6 +3,7 @@ package org.example.screen;
 import com.example.auth.Session;
 import com.example.client.ApiClient;
 import com.example.global.Global;
+import com.example.routing.Route;
 import com.example.util.UserValidator;
 import org.example.util.InputValidator;
 
@@ -12,24 +13,25 @@ public class RegisterScreen implements Screen{
 
     private Scanner scanner;
     private ApiClient apiClient;
-    private Session session;
     
 
-    public RegisterScreen(Scanner scanner, ApiClient apiClient, Session session){
+    public RegisterScreen(Scanner scanner, ApiClient apiClient){
         this.scanner = scanner;
         this.apiClient = apiClient;
-        this.session = session;
     }
 
     @Override
-    public void init(){
+    public Route init(){
         displayLabel();
         String login = getLoginFromUser();
         String password = getPasswordFromUser();
         boolean isPasswordValid = confirmPassword(password);
         if (isPasswordValid){
             apiClient.register(login, password);
+            return Route.LOGIN;
         }
+        System.out.println("Invalid data. Please try again");
+        return Route.REGISTER;
 
     }
 

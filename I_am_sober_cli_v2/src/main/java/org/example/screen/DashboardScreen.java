@@ -3,6 +3,7 @@ package org.example.screen;
 import com.example.dto.AddictionDto;
 import com.example.auth.Session;
 import com.example.client.ApiClient;
+import com.example.routing.Route;
 import com.example.service.SessionTokenStore;
 
 import java.util.ArrayList;
@@ -14,17 +15,17 @@ public class DashboardScreen implements Screen{
     private ApiClient apiClient;
     private Session session;
     private List<AddictionDto> addictionDtoList =  new ArrayList<>();
-    private Screen loginScreen;
 
-    public DashboardScreen(Scanner scanner, ApiClient apiClient, Session session, Screen loginScreen){
+
+    public DashboardScreen(Scanner scanner, ApiClient apiClient, Session session){
         this.scanner = scanner;
         this.apiClient = apiClient;
         this.session = session;
-        this.loginScreen = loginScreen;
+
     }
 
     @Override
-    public void init()  {
+    public Route init()  {
         greet();
         addictionDtoList = apiClient.getPaginatedAddictions(session.getToken(), 0);
         showMenu();
@@ -36,6 +37,8 @@ public class DashboardScreen implements Screen{
         else if(option.equalsIgnoreCase("l")){
             logout();
         }
+        // TODO: This is temporary
+        return Route.DASHBOARD;
     }
 
     private void greet(){
@@ -75,7 +78,7 @@ public class DashboardScreen implements Screen{
             SessionTokenStore.clearToken();
             session.clearUserCredentials();
             addictionDtoList.clear();
-            loginScreen.init();
+
 
         }
     }

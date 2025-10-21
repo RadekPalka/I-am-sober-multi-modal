@@ -2,11 +2,12 @@ package org.example.screen;
 
 import com.example.auth.Session;
 import com.example.client.ApiClient;
+import com.example.routing.Route;
 import com.example.service.SessionTokenStore;
 import com.example.util.UserValidator;
 import org.example.util.InputValidator;
-
-import java.io.IOException;
+import java.net.http.HttpResponse;
+import java.util.Optional;
 import java.util.Scanner;
 
 public class LoginScreen implements Screen{
@@ -14,6 +15,7 @@ public class LoginScreen implements Screen{
     private Scanner scanner;
     private ApiClient apiClient;
     private Session session;
+    private Screen dashboardScreen;
 
 
     public LoginScreen(Scanner scanner, ApiClient apiClient, Session session){
@@ -23,20 +25,41 @@ public class LoginScreen implements Screen{
     }
 
     @Override
-    public void init() {
+    public Route init() {
         displayLabel();
         String login = getLoginFromUser();
         String password = getPasswordFromUser();
-        if (login != null && password != null){
-            apiClient.logIn(login, password);
+
+        Optional<HttpResponse<String>> response = apiClient.logIn(login, password);
+
+        if (response.isEmpty()){
+            System.out.println("Invalid data. Please try again");
+            return Route.LOGIN;
         }
+
         if (promptRememberSession()){
             SessionTokenStore.saveToken(session.getToken());
         }
+        return Route.DASHBOARD;
 
     }
 
-  private void displayLabel(){
+    private Route loginAction(String login, String password){
+        Optional<HttpResponse<String>> responseOptional = apiClient.logIn(login, password);
+        if (responseOptional.isEmpty()){
+            System.out.println("Invalid data. Please try again");
+            return Route.LOGIN;
+        }
+        HttpResponse<String> response = responseOptional.get();
+        if (response.statusCode() == 200){
+            System.out.println("Login successfully");
+            return Route.DASHBOARD;
+        }
+        System.out.println("Invalid data. Please try again");
+        return Route.LOGIN;
+    }
+
+    private void displayLabel(){
       System.out.println("Sing up");
   }
 
