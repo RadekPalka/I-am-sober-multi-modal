@@ -5,5 +5,6 @@ public enum Route {
     REGISTER,
     LOGIN,
     DASHBOARD,
+    ADDICTION_DETAILS,
     EXIT
 }

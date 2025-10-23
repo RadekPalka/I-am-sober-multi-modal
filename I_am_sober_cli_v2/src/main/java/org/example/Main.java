@@ -20,7 +20,7 @@ public class Main {
         Session session = new Session();
         HttpClient http = HttpClients.defaultClient();
         ObjectMapper json = Jsons.defaultMapper();
-        ApiClient apiClient = new ApiClient(session, http, json);
+        ApiClient apiClient = new ApiClient(http, json);
 
         Screen registerScreen = new RegisterScreen(scanner, apiClient);
         Screen loginScreen = new LoginScreen(scanner, apiClient, session);

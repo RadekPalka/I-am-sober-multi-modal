@@ -15,6 +15,7 @@ public class DashboardScreen implements Screen{
     private ApiClient apiClient;
     private Session session;
     private List<AddictionDto> addictionDtoList =  new ArrayList<>();
+    private int addictionIndex;
 
 
     public DashboardScreen(Scanner scanner, ApiClient apiClient, Session session){
@@ -30,15 +31,8 @@ public class DashboardScreen implements Screen{
         addictionDtoList = apiClient.getPaginatedAddictions(session.getToken(), 0);
         showMenu();
         String option = askUserForOption();
-        if (isNumeric(option)){
-            int addictionNumber = Integer.parseInt(option);
 
-        }
-        else if(option.equalsIgnoreCase("l")){
-            logout();
-        }
-        // TODO: This is temporary
-        return Route.DASHBOARD;
+        return checkUserOption(option);
     }
 
     private void greet(){
@@ -57,13 +51,14 @@ public class DashboardScreen implements Screen{
                 AddictionDto addictionDto = addictionDtoList.get(i);
                 System.out.printf("%d-> %s, daily cost: %.2f%n PLN%n", i+1, addictionDto.getName(), addictionDto.getCostPerDay());
             }
-            System.out.println("Or press 'l' for logout");
+
 
         }
+        System.out.println("l-> logout");
     }
 
     private String askUserForOption(){
-        System.out.println("Type number of addiction to see a details:");
+        System.out.println("Choose your option");
         return scanner.nextLine();
     }
 
@@ -81,6 +76,21 @@ public class DashboardScreen implements Screen{
 
 
         }
+    }
+
+    Route checkUserOption(String option){
+        if (isNumeric(option)){
+            int addictionNumber = Integer.parseInt(option);
+            addictionIndex = addictionNumber -1;
+            return Route.ADDICTION_DETAILS;
+
+        }
+        else if(option.equalsIgnoreCase("l")){
+            logout();
+            return Route.EXIT;
+        }
+        System.out.println("Invalid data. Please try again.");
+        return Route.DASHBOARD;
     }
 
 

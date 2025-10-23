@@ -1,10 +1,9 @@
 package com.example.client;
 
-import com.example.dto.AddictionDto;
+
+import com.example.dto.AddictionDetailsDto;
 import com.example.auth.Session;
-import com.example.dto.UserDto;
 import com.example.global.Global;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.net.URI;
@@ -15,16 +14,14 @@ import java.util.*;
 
 public class ApiClient  {
     private HttpClient http;
-    private Session session;
     private ObjectMapper objectMapper;
 
-    public ApiClient(Session session, HttpClient http, ObjectMapper json) {
-        this.session = session;
+    public ApiClient(HttpClient http, ObjectMapper json) {
         this.http = http;
         this.objectMapper = json;
     }
 
-    public void register(String login, String password){
+    public HttpResponse<String> register(String login, String password){
 
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("username", login);
@@ -33,16 +30,21 @@ public class ApiClient  {
 
         try {
             String json = objectMapper.writeValueAsString(requestBody);
-            HttpResponse<String> response = post(Global.REGISTER_URL, json);
-            System.out.println("Your account have created successfully");
+            return post(Global.REGISTER_URL, json);
+
+
+
+
+
+
         } catch (Exception e) {
-            System.out.print("Something goes wrong. Please try again");
-            e.printStackTrace();
+            // TODO create Exception
+            throw new RuntimeException();
 
         }
     }
 
-    public Optional<HttpResponse<String>> logIn(String login, String password){
+    public HttpResponse<String> logIn(String login, String password){
 
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("username", login);
@@ -50,27 +52,24 @@ public class ApiClient  {
 
         try {
             String json = objectMapper.writeValueAsString(requestBody);
-            HttpResponse<String> response = post(Global.LOGIN_URL, json);
-            return Optional.of(response);
+            return post(Global.LOGIN_URL, json);
+
+
 
         } catch (Exception e) {
-            System.out.println("API call failed");
-            e.printStackTrace();
-            return Optional.empty();
+            // TODO create Exception
+            throw new RuntimeException();
 
         }
 
     }
 
-    public Optional<UserDto> fetchUser(String token) {
-        if (token == null || token.isBlank()) {
-            return Optional.empty();
-        }
+    public HttpResponse<String> fetchUser(String token) {
 
         try {
             String url = Global.USER_DETAILS;
 
-            HttpResponse<String> res = get(
+            return get(
                     url,
                     Map.of(
                             "Authorization", token.trim(),
@@ -78,65 +77,66 @@ public class ApiClient  {
                     )
             );
 
-            int code = res.statusCode();
-            if (code == 200) {
-                UserDto user = objectMapper.readValue(res.body(), UserDto.class);
-                return Optional.of(user);
-            } else if (code == 401 || code == 403) {
-                return Optional.empty();
-            } else {
-                System.err.println("fetchUser: HTTP " + code);
-                return Optional.empty();
-            }
-        } catch (IOException | InterruptedException e) {
-            System.err.println("fetchUser failed: " + e.getMessage());
-            return Optional.empty();
+
+
+        } catch (Exception e) {
+            // TODO create Exception
+            throw new RuntimeException();
         }
     }
 
 
 
-    public List<AddictionDto> getPaginatedAddictions(String token, int pageNumber) {
+    public HttpResponse<String> getPaginatedAddictions(String token, int pageNumber) {
         try {
             String url = Global.PAGINATED_ADDICTIONS_URL + "?page=" + pageNumber;
 
-            HttpResponse<String> res = get(url, Map.of(
+            return get(url, Map.of(
                     "Authorization", token.trim(),
                     "Accept", "application/json"
             ));
-            return new ArrayList<>(objectMapper.readValue(res.body(), new TypeReference<List<AddictionDto>>() {}));
+
 
         } catch (Exception e) {
-            System.out.println("API call failed");
-            e.printStackTrace();
-            return Collections.emptyList();
+            // TODO create Exception
+            throw new RuntimeException();
         }
 
     }
 
-    public boolean logout(String token){
+
+    public HttpResponse<String> getAddictionDetails(String token, long id){
+        try{
+            String url = Global.PAGINATED_ADDICTIONS_URL + "/" + id;
+
+             return get(url, Map.of(
+                    "Authorization", token.trim(),
+                    "Accept", "application/json"
+            ));
+            return Optional.of(objectMapper.readValue(res.body(), AddictionDetailsDto.class));
+        } catch (Exception e) {
+            // TODO create Exception
+            throw new RuntimeException();
+        }
+    }
+
+    public HttpResponse<String> logout(String token){
 
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("sessionToken", token);
         try {
             String json = objectMapper.writeValueAsString(requestBody);
-            HttpResponse<String> response = post(Global.LOGOUT_URL, json);
-            if (response.statusCode() == 200) {
-                System.out.println("Logged out successfully");
-                return true;
-            } else if (response.statusCode() == 401) {
-                System.out.println("Invalid credentials");
-            } else {
-                System.out.println("Logged out failed");
+            return post(Global.LOGOUT_URL, json);
 
-            }
         } catch (Exception e) {
-            System.out.println("API call failed");
-            e.printStackTrace();
+            // TODO create Exception
+            throw new RuntimeException();
 
         }
-        return false;
+
     }
+
+
 
 
     private HttpResponse<String> get(String url, Map<String, String> headers)
