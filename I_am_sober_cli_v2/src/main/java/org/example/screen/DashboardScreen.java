@@ -68,7 +68,7 @@ public class DashboardScreen implements Screen{
         return input.matches("\\d+");
     }
 
-    private void logout() throws InterruptedException {
+    private boolean logout() throws InterruptedException {
         String token = session.getToken();
         for (int i= 0; i< 3; i++){
             if (i> 0){
@@ -82,7 +82,7 @@ public class DashboardScreen implements Screen{
                     SessionTokenStore.clearToken();
                     session.clearUserCredentials();
                     addictionDtoList.clear();
-                    return;
+                    return true;
                 }
                 else{
                     // TODO handle specific status codes and write more specific messages
@@ -98,7 +98,7 @@ public class DashboardScreen implements Screen{
 
             }
         }
-
+        return false;
 
     }
 
@@ -110,9 +110,8 @@ public class DashboardScreen implements Screen{
                 return Route.ADDICTION_DETAILS;
 
             }
-            else if(option.equalsIgnoreCase("l")){
-                logout();
-                return Route.EXIT;
+            else if(option.equalsIgnoreCase("l") && logout()){
+                return Route.HOME;
             }
             System.out.println("Invalid data. Please try again.");
             return Route.DASHBOARD;
