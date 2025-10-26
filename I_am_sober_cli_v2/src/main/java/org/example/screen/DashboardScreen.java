@@ -68,41 +68,58 @@ public class DashboardScreen implements Screen{
         return input.matches("\\d+");
     }
 
-    private void logout(){
+    private void logout() throws InterruptedException {
         String token = session.getToken();
+        for (int i= 0; i< 3; i++){
+            if (i> 0){
+               Thread.sleep(1000);
+            }
+            try{
+                HttpResponse<String> response = apiClient.logout(token);
+                int code = response.statusCode();
+                if (code == 200){
+                    System.out.println("Logout successfully");
+                    SessionTokenStore.clearToken();
+                    session.clearUserCredentials();
+                    addictionDtoList.clear();
+                    return;
+                }
+                else{
+                    // TODO handle specific status codes and write more specific messages
+                    if (i ==2){
+                        System.out.println("Something went wrong. Please try again");
+                    }
 
-        try{
-            HttpResponse<String> response = apiClient.logout(token);
-            int code = response.statusCode();
-            if (code == 200){
-                System.out.println("Logout successfully");
-                SessionTokenStore.clearToken();
-                session.clearUserCredentials();
-                addictionDtoList.clear();
+                }
+            } catch (Exception e) {
+                if (i == 2){
+                    System.out.println("No internet connection. Please try again");
+                }
+
             }
-            else{
-                // TODO handle specific status codes and write more specific messages
-                System.out.println("Something went wrong. Please try again");
-            }
-        } catch (Exception e) {
-            System.out.println("No internet connection. Please try again");
         }
+
 
     }
 
-    Route checkUserOption(String option){
-        if (isNumeric(option)){
-            int addictionNumber = Integer.parseInt(option);
-            addictionIndex = addictionNumber -1;
-            return Route.ADDICTION_DETAILS;
+    Route checkUserOption(String option)  {
+        try{
+            if (isNumeric(option)){
+                int addictionNumber = Integer.parseInt(option);
+                addictionIndex = addictionNumber -1;
+                return Route.ADDICTION_DETAILS;
 
+            }
+            else if(option.equalsIgnoreCase("l")){
+                logout();
+                return Route.EXIT;
+            }
+            System.out.println("Invalid data. Please try again.");
+            return Route.DASHBOARD;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        else if(option.equalsIgnoreCase("l")){
-            logout();
-            return Route.EXIT;
-        }
-        System.out.println("Invalid data. Please try again.");
-        return Route.DASHBOARD;
+
     }
 
 
