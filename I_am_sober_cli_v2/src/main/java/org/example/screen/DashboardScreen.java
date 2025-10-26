@@ -110,8 +110,11 @@ public class DashboardScreen implements Screen{
                 return Route.ADDICTION_DETAILS;
 
             }
-            else if(option.equalsIgnoreCase("l") && logout()){
-                return Route.HOME;
+            else if(option.equalsIgnoreCase("l")){
+                if (logout()){
+                    return Route.HOME;
+                }
+
             }
             System.out.println("Invalid data. Please try again.");
             return Route.DASHBOARD;
