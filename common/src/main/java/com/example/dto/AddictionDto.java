@@ -15,4 +15,8 @@ public class AddictionDto {
     public float getCostPerDay(){
         return costPerDay;
     }
+
+    public long getId(){
+        return id;
+    }
 }

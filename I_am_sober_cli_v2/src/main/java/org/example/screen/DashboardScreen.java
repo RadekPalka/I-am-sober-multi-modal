@@ -5,7 +5,6 @@ import com.example.auth.Session;
 import com.example.client.ApiClient;
 import com.example.routing.Route;
 import com.example.service.SessionTokenStore;
-
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +15,6 @@ public class DashboardScreen implements Screen{
     private ApiClient apiClient;
     private Session session;
     private List<AddictionDto> addictionDtoList =  new ArrayList<>();
-    private int addictionIndex;
 
 
     public DashboardScreen(Scanner scanner, ApiClient apiClient, Session session){
@@ -29,13 +27,13 @@ public class DashboardScreen implements Screen{
     @Override
     public Route init()  {
         greet();
-
-        //apiClient.getPaginatedAddictions(session.getToken(), 0);
         showMenu();
         String option = askUserForOption();
 
         return checkUserOption(option);
     }
+
+
 
     private void greet(){
         System.out.println("Welcome " + session.getLogin());
@@ -102,12 +100,15 @@ public class DashboardScreen implements Screen{
 
     }
 
-    Route checkUserOption(String option)  {
+    private Route checkUserOption(String option)  {
         try{
             if (isNumeric(option)){
                 int addictionNumber = Integer.parseInt(option);
-                addictionIndex = addictionNumber -1;
-                return Route.ADDICTION_DETAILS;
+
+                if (loadAddictions(addictionNumber -1)){
+                    return Route.ADDICTION_DETAILS;
+                }
+
 
             }
             else if(option.equalsIgnoreCase("l")){
@@ -122,6 +123,26 @@ public class DashboardScreen implements Screen{
             throw new RuntimeException(e);
         }
 
+    }
+
+    private boolean loadAddictions(int index){
+        AddictionDto addiction = addictionDtoList.get(index);
+        try{
+            HttpResponse<String> response = apiClient.getAddictionDetails(session.getToken(), addiction.getId());
+            int code = response.statusCode();
+            if (code == 200){
+                System.out.println("Here are your addiction details");
+                return true;
+            }
+            else{
+                // TODO handle specific status codes and write more specific messages
+                System.out.println("Something went wrong. Please try again");
+            }
+        } catch (Exception e) {
+            System.out.println("No internet connection. Please try again");
+
+        }
+        return false;
     }
 
 
