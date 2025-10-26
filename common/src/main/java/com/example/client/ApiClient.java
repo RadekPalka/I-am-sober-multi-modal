@@ -1,9 +1,7 @@
 package com.example.client;
 
-
-import com.example.dto.AddictionDetailsDto;
-import com.example.auth.Session;
 import com.example.global.Global;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.net.URI;
@@ -13,63 +11,52 @@ import java.net.http.HttpResponse;
 import java.util.*;
 
 public class ApiClient  {
-    private HttpClient http;
-    private ObjectMapper objectMapper;
+    private final HttpClient http;
+    private final ObjectMapper objectMapper;
 
     public ApiClient(HttpClient http, ObjectMapper json) {
         this.http = http;
         this.objectMapper = json;
     }
 
-    public HttpResponse<String> register(String login, String password){
+    public <T> T parseJson(String json, TypeReference<T> typeRef) {
+        try {
+            return objectMapper.readValue(json, typeRef);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to parse JSON", e);
+        }
+    }
+
+
+    public HttpResponse<String> register(String login, String password) throws Exception {
+
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("username", login);
+        requestBody.put("password", password);
+
+        String json = objectMapper.writeValueAsString(requestBody);
+        return post(Global.REGISTER_URL, json);
+
+
+    }
+
+    public HttpResponse<String> logIn(String login, String password) throws Exception {
 
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("username", login);
         requestBody.put("password", password);
 
 
-        try {
-            String json = objectMapper.writeValueAsString(requestBody);
-            return post(Global.REGISTER_URL, json);
-
-
-
-
-
-
-        } catch (Exception e) {
-            // TODO create Exception
-            throw new RuntimeException();
-
-        }
-    }
-
-    public HttpResponse<String> logIn(String login, String password){
-
-        Map<String, Object> requestBody = new HashMap<>();
-        requestBody.put("username", login);
-        requestBody.put("password", password);
-
-        try {
-            String json = objectMapper.writeValueAsString(requestBody);
-            return post(Global.LOGIN_URL, json);
-
-
-
-        } catch (Exception e) {
-            // TODO create Exception
-            throw new RuntimeException();
-
-        }
+        String json = objectMapper.writeValueAsString(requestBody);
+        return post(Global.LOGIN_URL, json);
 
     }
 
-    public HttpResponse<String> fetchUser(String token) {
+    public HttpResponse<String> fetchUser(String token) throws IOException, InterruptedException {
 
-        try {
-            String url = Global.USER_DETAILS;
 
-            return get(
+        String url = Global.USER_DETAILS;
+        return get(
                     url,
                     Map.of(
                             "Authorization", token.trim(),
@@ -79,60 +66,45 @@ public class ApiClient  {
 
 
 
-        } catch (Exception e) {
-            // TODO create Exception
-            throw new RuntimeException();
-        }
+
     }
 
 
 
-    public HttpResponse<String> getPaginatedAddictions(String token, int pageNumber) {
-        try {
-            String url = Global.PAGINATED_ADDICTIONS_URL + "?page=" + pageNumber;
+    public HttpResponse<String> getPaginatedAddictions(String token, int pageNumber) throws IOException, InterruptedException {
 
-            return get(url, Map.of(
+        String url = Global.PAGINATED_ADDICTIONS_URL + "?page=" + pageNumber;
+
+        return get(url, Map.of(
                     "Authorization", token.trim(),
                     "Accept", "application/json"
             ));
 
 
-        } catch (Exception e) {
-            // TODO create Exception
-            throw new RuntimeException();
-        }
+
 
     }
 
 
-    public HttpResponse<String> getAddictionDetails(String token, long id){
-        try{
-            String url = Global.PAGINATED_ADDICTIONS_URL + "/" + id;
+    public HttpResponse<String> getAddictionDetails(String token, long id) throws IOException, InterruptedException {
 
-             return get(url, Map.of(
+        String url = Global.PAGINATED_ADDICTIONS_URL + "/" + id;
+
+        return get(url, Map.of(
                     "Authorization", token.trim(),
                     "Accept", "application/json"
             ));
-            return Optional.of(objectMapper.readValue(res.body(), AddictionDetailsDto.class));
-        } catch (Exception e) {
-            // TODO create Exception
-            throw new RuntimeException();
-        }
+
     }
 
-    public HttpResponse<String> logout(String token){
+    public HttpResponse<String> logout(String token) throws Exception {
 
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("sessionToken", token);
-        try {
-            String json = objectMapper.writeValueAsString(requestBody);
-            return post(Global.LOGOUT_URL, json);
 
-        } catch (Exception e) {
-            // TODO create Exception
-            throw new RuntimeException();
+        String json = objectMapper.writeValueAsString(requestBody);
+        return post(Global.LOGOUT_URL, json);
 
-        }
 
     }
 

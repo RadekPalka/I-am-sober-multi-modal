@@ -6,6 +6,7 @@ import com.example.client.ApiClient;
 import com.example.routing.Route;
 import com.example.service.SessionTokenStore;
 
+import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -28,7 +29,8 @@ public class DashboardScreen implements Screen{
     @Override
     public Route init()  {
         greet();
-        addictionDtoList = apiClient.getPaginatedAddictions(session.getToken(), 0);
+
+        //apiClient.getPaginatedAddictions(session.getToken(), 0);
         showMenu();
         String option = askUserForOption();
 
@@ -69,13 +71,23 @@ public class DashboardScreen implements Screen{
     private void logout(){
         String token = session.getToken();
 
-        if(apiClient.logout(token)){
-            SessionTokenStore.clearToken();
-            session.clearUserCredentials();
-            addictionDtoList.clear();
-
-
+        try{
+            HttpResponse<String> response = apiClient.logout(token);
+            int code = response.statusCode();
+            if (code == 200){
+                System.out.println("Logout successfully");
+                SessionTokenStore.clearToken();
+                session.clearUserCredentials();
+                addictionDtoList.clear();
+            }
+            else{
+                // TODO handle specific status codes and write more specific messages
+                System.out.println("Something went wrong. Please try again");
+            }
+        } catch (Exception e) {
+            System.out.println("No internet connection. Please try again");
         }
+
     }
 
     Route checkUserOption(String option){

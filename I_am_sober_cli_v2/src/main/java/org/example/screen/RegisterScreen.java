@@ -7,6 +7,7 @@ import com.example.routing.Route;
 import com.example.util.UserValidator;
 import org.example.util.InputValidator;
 
+import java.net.http.HttpResponse;
 import java.util.Scanner;
 
 public class RegisterScreen implements Screen{
@@ -27,8 +28,25 @@ public class RegisterScreen implements Screen{
         String password = getPasswordFromUser();
         boolean isPasswordValid = confirmPassword(password);
         if (isPasswordValid){
-            apiClient.register(login, password);
-            return Route.LOGIN;
+            try{
+                HttpResponse<String> response = apiClient.register(login, password);
+                int code = response.statusCode();
+                if (code == 200){
+                    System.out.println("Register successfully");
+                    return Route.LOGIN;
+                }
+                else{
+                    // TODO handle specific status codes and write more specific messages
+                    System.out.println("Something went wrong");
+                    return Route.REGISTER;
+                }
+
+            }
+            catch (Exception e){
+                System.out.println("No internet connection. Please try again");
+                return Route.REGISTER;
+            }
+
         }
         System.out.println("Invalid data. Please try again");
         return Route.REGISTER;

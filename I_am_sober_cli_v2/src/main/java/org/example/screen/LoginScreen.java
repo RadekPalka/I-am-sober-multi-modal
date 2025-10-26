@@ -2,12 +2,13 @@ package org.example.screen;
 
 import com.example.auth.Session;
 import com.example.client.ApiClient;
+import com.example.dto.TokenDto;
 import com.example.routing.Route;
 import com.example.service.SessionTokenStore;
 import com.example.util.UserValidator;
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.example.util.InputValidator;
 import java.net.http.HttpResponse;
-import java.util.Optional;
 import java.util.Scanner;
 
 public class LoginScreen implements Screen{
@@ -30,33 +31,37 @@ public class LoginScreen implements Screen{
         String login = getLoginFromUser();
         String password = getPasswordFromUser();
 
-        Optional<HttpResponse<String>> response = apiClient.logIn(login, password);
+        boolean rememberMe = promptRememberSession();
 
-        if (response.isEmpty()){
-            System.out.println("Invalid data. Please try again");
-            return Route.LOGIN;
-        }
-
-        if (promptRememberSession()){
-            SessionTokenStore.saveToken(session.getToken());
-        }
-        return Route.DASHBOARD;
+        return loginAction(login, password, rememberMe);
 
     }
 
-    private Route loginAction(String login, String password){
-        Optional<HttpResponse<String>> responseOptional = apiClient.logIn(login, password);
-        if (responseOptional.isEmpty()){
-            System.out.println("Invalid data. Please try again");
+    private Route loginAction(String login, String password, boolean rememberMe){
+        try{
+            HttpResponse<String> response = apiClient.logIn(login, password);
+            int code = response.statusCode();
+            if (code == 200){
+                System.out.println("Login Successfully");
+                TokenDto tokenDto= apiClient.parseJson(response.body(), new TypeReference<TokenDto>() {});
+                String token = tokenDto.getSessionToken();
+                session.setToken(token);
+                if (rememberMe){
+                    SessionTokenStore.saveToken(token);
+                }
+                return Route.DASHBOARD;
+            } else  {
+                // TODO handle specific status codes and write more specific messages
+                System.out.println("Something went wrong. Please try again");
+                return Route.LOGIN;
+
+            }
+        } catch (Exception e) {
+            System.out.println("No internet connection. Please try again");
             return Route.LOGIN;
         }
-        HttpResponse<String> response = responseOptional.get();
-        if (response.statusCode() == 200){
-            System.out.println("Login successfully");
-            return Route.DASHBOARD;
-        }
-        System.out.println("Invalid data. Please try again");
-        return Route.LOGIN;
+
+
     }
 
     private void displayLabel(){
