@@ -2,13 +2,13 @@ package org.example.screen;
 
 import com.example.auth.Session;
 import com.example.client.ApiClient;
-import com.example.dto.TokenDto;
+import com.example.exception.ApiResponseException;
 import com.example.routing.Route;
 import com.example.service.SessionTokenStore;
 import com.example.util.UserValidator;
-import com.fasterxml.jackson.core.type.TypeReference;
 import org.example.util.InputValidator;
-import java.net.http.HttpResponse;
+
+import java.io.IOException;
 import java.util.Scanner;
 
 public class LoginScreen implements Screen{
@@ -33,31 +33,29 @@ public class LoginScreen implements Screen{
 
         boolean rememberMe = promptRememberSession();
 
-        return loginAction(login, password, rememberMe);
+        return handleLogin(login, password, rememberMe);
 
     }
 
-    private Route loginAction(String login, String password, boolean rememberMe){
+    private Route handleLogin(String login, String password, boolean rememberMe){
         try{
-            HttpResponse<String> response = apiClient.logIn(login, password);
-            int code = response.statusCode();
-            if (code == 200){
-                System.out.println("Login Successfully");
-                TokenDto tokenDto= apiClient.parseJson(response.body(), new TypeReference<TokenDto>() {});
-                String token = tokenDto.getSessionToken();
-                session.setToken(token);
-                if (rememberMe){
-                    SessionTokenStore.saveToken(token);
-                }
-                return Route.DASHBOARD;
-            } else  {
-                // TODO handle specific status codes and write more specific messages
-                System.out.println("Something went wrong. Please try again");
-                return Route.LOGIN;
+            String token = apiClient.logIn(login, password);
 
+            System.out.println("Login Successfully");
+
+            session.setToken(token);
+            if (rememberMe){
+                SessionTokenStore.saveToken(token);
             }
-        } catch (Exception e) {
-            System.out.println("No internet connection. Please try again");
+                return Route.DASHBOARD;
+
+        }
+        catch (ApiResponseException e) {
+            System.out.println(e.getMessage());
+            return Route.LOGIN;
+        }
+        catch (IOException | InterruptedException e){
+            System.out.println("Network error. Please check your connection.");
             return Route.LOGIN;
         }
 

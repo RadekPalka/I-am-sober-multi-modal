@@ -2,11 +2,13 @@ package org.example.screen;
 
 import com.example.auth.Session;
 import com.example.client.ApiClient;
+import com.example.exception.ApiResponseException;
 import com.example.global.Global;
 import com.example.routing.Route;
 import com.example.util.UserValidator;
 import org.example.util.InputValidator;
 
+import java.io.IOException;
 import java.net.http.HttpResponse;
 import java.util.Scanner;
 
@@ -27,29 +29,11 @@ public class RegisterScreen implements Screen{
         String login = getLoginFromUser();
         String password = getPasswordFromUser();
         boolean isPasswordValid = confirmPassword(password);
-        if (isPasswordValid){
-            try{
-                HttpResponse<String> response = apiClient.register(login, password);
-                int code = response.statusCode();
-                if (code == 200){
-                    System.out.println("Register successfully");
-                    return Route.LOGIN;
-                }
-                else{
-                    // TODO handle specific status codes and write more specific messages
-                    System.out.println("Something went wrong");
-                    return Route.REGISTER;
-                }
-
-            }
-            catch (Exception e){
-                System.out.println("No internet connection. Please try again");
-                return Route.REGISTER;
-            }
-
+        if (!isPasswordValid){
+            System.out.println("Invalid data. Please try again");
+            return Route.REGISTER;
         }
-        System.out.println("Invalid data. Please try again");
-        return Route.REGISTER;
+        return handleRegistration(login, password);
 
     }
 
@@ -100,6 +84,23 @@ public class RegisterScreen implements Screen{
             System.out.println("Passwords do not match. Please try again.");
 
         }
+
+    }
+
+    private Route handleRegistration(String login, String password){
+        try{
+            apiClient.register(login, password);
+            return Route.LOGIN;
+        }
+        catch (ApiResponseException e){
+            System.out.println(e.getMessage());
+            return Route.REGISTER;
+        }
+        catch(IOException | InterruptedException e){
+            System.out.println("Network error. Please check your connection.");
+            return Route.REGISTER;
+        }
+
 
     }
 

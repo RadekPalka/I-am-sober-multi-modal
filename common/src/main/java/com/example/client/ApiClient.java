@@ -1,5 +1,7 @@
 package com.example.client;
 
+import com.example.dto.TokenDto;
+import com.example.exception.ApiResponseException;
 import com.example.global.Global;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,19 +30,27 @@ public class ApiClient  {
     }
 
 
-    public HttpResponse<String> register(String login, String password) throws Exception {
+    public void register(String login, String password) throws ApiResponseException, IOException, InterruptedException {
 
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("username", login);
         requestBody.put("password", password);
 
         String json = objectMapper.writeValueAsString(requestBody);
-        return post(Global.REGISTER_URL, json);
+
+        HttpResponse<String> response = post(Global.REGISTER_URL, json);
+        int code = response.statusCode();
+        if (code == 201){
+            return;
+        }
+        throw new ApiResponseException(code);
+
+
 
 
     }
 
-    public HttpResponse<String> logIn(String login, String password) throws Exception {
+    public String logIn(String login, String password) throws ApiResponseException, IOException, InterruptedException {
 
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("username", login);
@@ -48,7 +58,13 @@ public class ApiClient  {
 
 
         String json = objectMapper.writeValueAsString(requestBody);
-        return post(Global.LOGIN_URL, json);
+        HttpResponse<String> response = post(Global.LOGIN_URL, json);
+        int code = response.statusCode();
+        if (code == 200){
+            TokenDto tokenDto = parseJson(response.body(), new TypeReference<TokenDto>() {});
+            return tokenDto.getSessionToken();
+        }
+        throw new ApiResponseException(code);
 
     }
 
@@ -128,7 +144,7 @@ public class ApiClient  {
 
 
 
-    private HttpResponse<String> post(String url, String jsonBody) throws Exception {
+    private HttpResponse<String> post(String url, String jsonBody) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
                 .header("Content-Type", "application/json")
