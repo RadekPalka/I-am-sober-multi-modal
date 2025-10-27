@@ -19,5 +19,6 @@ public class ApiResponseException extends Exception {
         this.message = STATUS_MESSAGES.get(statusCode);
     }
 
+    public int getStatusCode() { return statusCode; }
     public String getMessage() { return message; }
 }
