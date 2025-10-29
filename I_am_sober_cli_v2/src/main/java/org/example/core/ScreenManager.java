@@ -4,11 +4,13 @@ import com.example.auth.Session;
 import com.example.client.ApiClient;
 
 import com.example.dto.UserDto;
+import com.example.exception.ApiResponseException;
 import com.example.routing.Route;
 import com.example.service.SessionTokenStore;
 
 import org.example.screen.Screen;
 
+import java.io.IOException;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Optional;
@@ -44,14 +46,25 @@ public class ScreenManager {
 
     private Route decideInitialRoute() {
         Optional<String> tokenOpt = SessionTokenStore.loadToken();
-        if (tokenOpt.isEmpty()) return Route.HOME;
+        if (tokenOpt.isEmpty()) {
+            return Route.HOME;
+        }
+        try{
+            String token = tokenOpt.get();
+            UserDto userDto = apiClient.fetchUser(token);
+            session.setLogin(userDto.getUsername());
+            session.setToken(token);
+            return Route.DASHBOARD;
+        }
+        catch (ApiResponseException e) {
+            System.out.println(e.getMessage());
+            return Route.HOME;
+        }
+        catch (IOException | InterruptedException e){
+            System.out.println("Network error. Please check your connection.");
+            return Route.HOME;
+        }
 
-        Optional<UserDto> userOpt = tokenOpt.flatMap(apiClient::fetchUser);
-        if (userOpt.isEmpty()) return Route.HOME;
 
-        UserDto user = userOpt.get();
-        session.setLogin(user.getUsername());
-        session.setToken(tokenOpt.get());
-        return Route.DASHBOARD;
     }
 }

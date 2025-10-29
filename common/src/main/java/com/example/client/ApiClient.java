@@ -1,6 +1,7 @@
 package com.example.client;
 
 import com.example.dto.TokenDto;
+import com.example.dto.UserDto;
 import com.example.exception.ApiResponseException;
 import com.example.global.Global;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -21,7 +22,7 @@ public class ApiClient  {
         this.objectMapper = json;
     }
 
-    public <T> T parseJson(String json, TypeReference<T> typeRef) {
+    private <T> T parseJson(String json, TypeReference<T> typeRef) {
         try {
             return objectMapper.readValue(json, typeRef);
         } catch (Exception e) {
@@ -68,17 +69,23 @@ public class ApiClient  {
 
     }
 
-    public HttpResponse<String> fetchUser(String token) throws IOException, InterruptedException {
+    public UserDto fetchUser(String token) throws IOException, InterruptedException, ApiResponseException {
 
 
         String url = Global.USER_DETAILS;
-        return get(
+        HttpResponse<String> response = get(
                     url,
                     Map.of(
                             "Authorization", token.trim(),
                             "Accept", "application/json"
                     )
             );
+        int code = response.statusCode();
+        if (code == 200){
+            return parseJson(response.body(), new TypeReference<UserDto>() {
+            });
+        }
+        throw new ApiResponseException(code);
 
 
 
