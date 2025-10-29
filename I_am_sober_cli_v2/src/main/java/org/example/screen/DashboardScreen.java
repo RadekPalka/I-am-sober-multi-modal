@@ -3,9 +3,12 @@ package org.example.screen;
 import com.example.dto.AddictionDto;
 import com.example.auth.Session;
 import com.example.client.ApiClient;
+import com.example.exception.ApiResponseException;
 import com.example.routing.Route;
 import com.example.service.SessionTokenStore;
-import java.net.http.HttpResponse;
+import org.example.context.UiContext;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -14,19 +17,25 @@ public class DashboardScreen implements Screen{
     private Scanner scanner;
     private ApiClient apiClient;
     private Session session;
+    private UiContext uiContext;
     private List<AddictionDto> addictionDtoList =  new ArrayList<>();
+    private int pageNumber = 0;
 
 
-    public DashboardScreen(Scanner scanner, ApiClient apiClient, Session session){
+    public DashboardScreen(Scanner scanner, ApiClient apiClient, Session session, UiContext uiContext){
         this.scanner = scanner;
         this.apiClient = apiClient;
         this.session = session;
-
+        this.uiContext = uiContext;
     }
 
     @Override
     public Route init()  {
         greet();
+        if (addictionDtoList.isEmpty()){
+            loadAddictions();
+        }
+
         showMenu();
         String option = askUserForOption();
 
@@ -39,6 +48,25 @@ public class DashboardScreen implements Screen{
         System.out.println("Welcome " + session.getLogin());
 
 
+    }
+
+    private void loadAddictions(){
+        String token = session.getToken();
+        try{
+            addictionDtoList = apiClient.getPaginatedAddictions(token, pageNumber);
+            pageNumber ++;
+        }
+        catch (ApiResponseException e) {
+            System.out.println(e.getMessage());
+        }
+        catch (IOException | InterruptedException e){
+            System.out.println("Network error. Please check your connection.");
+        }
+
+    }
+
+    private boolean isMoreAddictionsAvailable(){
+        return addictionDtoList.size() % 10 == 0;
     }
 
     private void showMenu(){
@@ -54,6 +82,9 @@ public class DashboardScreen implements Screen{
 
 
         }
+        if (isMoreAddictionsAvailable()){
+            System.out.println("m-> more load more addictions");
+        }
         System.out.println("l-> logout");
     }
 
@@ -66,56 +97,55 @@ public class DashboardScreen implements Screen{
         return input.matches("\\d+");
     }
 
-    private boolean logout() throws InterruptedException {
+    private Route handleLogout() throws InterruptedException {
         String token = session.getToken();
-        for (int i= 0; i< 3; i++){
-            if (i> 0){
+        for (int i = 0; i< 3; i++){
+            if (i > 0){
                Thread.sleep(1000);
             }
-            try{
-                HttpResponse<String> response = apiClient.logout(token);
-                int code = response.statusCode();
-                if (code == 200){
-                    System.out.println("Logout successfully");
-                    SessionTokenStore.clearToken();
-                    session.clearUserCredentials();
-                    addictionDtoList.clear();
-                    return true;
-                }
-                else{
-                    // TODO handle specific status codes and write more specific messages
-                    if (i ==2){
-                        System.out.println("Something went wrong. Please try again");
-                    }
-
-                }
-            } catch (Exception e) {
+            try {
+                apiClient.logout(token);
+                System.out.println("Logout successfully");
+                SessionTokenStore.clearToken();
+                session.clearUserCredentials();
+                addictionDtoList.clear();
+                return Route.HOME;
+            }
+            catch (ApiResponseException e) {
                 if (i == 2){
-                    System.out.println("No internet connection. Please try again");
+                    System.out.println(e.getMessage());
                 }
 
             }
+            catch (IOException | InterruptedException e){
+                if (i == 2){
+                    System.out.println("Network error. Please check your connection.");
+                }
+
+            }
+
         }
-        return false;
+        return Route.DASHBOARD;
 
     }
 
     private Route checkUserOption(String option)  {
         try{
             if (isNumeric(option)){
-                int addictionNumber = Integer.parseInt(option);
-
-                if (loadAddictions(addictionNumber -1)){
+                int addictionIndex = Integer.parseInt(option) -1;
+                if (isIndexInRange(addictionIndex)){
+                    long id = getAddictionId(addictionIndex);
+                    uiContext.setSelectedAddictionId(id);
                     return Route.ADDICTION_DETAILS;
                 }
 
-
             }
             else if(option.equalsIgnoreCase("l")){
-                if (logout()){
-                    return Route.HOME;
-                }
+                return handleLogout();
 
+            } else if (isMoreAddictionsAvailable() && option.equalsIgnoreCase("m")) {
+                loadAddictions();
+                return Route.DASHBOARD;
             }
             System.out.println("Invalid data. Please try again.");
             return Route.DASHBOARD;
@@ -125,25 +155,11 @@ public class DashboardScreen implements Screen{
 
     }
 
-    private boolean loadAddictions(int index){
-        AddictionDto addiction = addictionDtoList.get(index);
-        try{
-            HttpResponse<String> response = apiClient.getAddictionDetails(session.getToken(), addiction.getId());
-            int code = response.statusCode();
-            if (code == 200){
-                System.out.println("Here are your addiction details");
-                return true;
-            }
-            else{
-                // TODO handle specific status codes and write more specific messages
-                System.out.println("Something went wrong. Please try again");
-            }
-        } catch (Exception e) {
-            System.out.println("No internet connection. Please try again");
-
-        }
-        return false;
+    private boolean isIndexInRange(int index){
+        return addictionDtoList.size() > index && index >0;
     }
 
-
+    private long getAddictionId(int addictionIndex){
+        return addictionDtoList.get(addictionIndex).getId();
+    }
 }

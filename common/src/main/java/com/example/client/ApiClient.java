@@ -1,5 +1,7 @@
 package com.example.client;
 
+import com.example.dto.AddictionDetailsDto;
+import com.example.dto.AddictionDto;
 import com.example.dto.TokenDto;
 import com.example.dto.UserDto;
 import com.example.exception.ApiResponseException;
@@ -94,40 +96,49 @@ public class ApiClient  {
 
 
 
-    public HttpResponse<String> getPaginatedAddictions(String token, int pageNumber) throws IOException, InterruptedException {
+    public ArrayList<AddictionDto> getPaginatedAddictions(String token, int pageNumber) throws IOException, InterruptedException, ApiResponseException {
 
         String url = Global.PAGINATED_ADDICTIONS_URL + "?page=" + pageNumber;
 
-        return get(url, Map.of(
+        HttpResponse<String> response = get(url, Map.of(
                     "Authorization", token.trim(),
                     "Accept", "application/json"
             ));
-
-
-
+        int code = response.statusCode();
+        if (code == 200){
+            return parseJson(response.body(), new TypeReference<ArrayList<AddictionDto>>(){});
+        }
+        throw new ApiResponseException(code);
 
     }
 
 
-    public HttpResponse<String> getAddictionDetails(String token, long id) throws IOException, InterruptedException {
+    public AddictionDetailsDto getAddictionDetails(String token, long id) throws IOException, InterruptedException, ApiResponseException {
 
         String url = Global.PAGINATED_ADDICTIONS_URL + "/" + id;
 
-        return get(url, Map.of(
+        HttpResponse<String> response = get(url, Map.of(
                     "Authorization", token.trim(),
                     "Accept", "application/json"
             ));
-
+        int code = response.statusCode();
+        if (code == 200){
+            return parseJson(response.body(), new TypeReference<AddictionDetailsDto>(){});
+        }
+        throw new ApiResponseException(code);
     }
 
-    public HttpResponse<String> logout(String token) throws Exception {
+    public void logout(String token) throws IOException, InterruptedException, ApiResponseException {
 
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("sessionToken", token);
 
         String json = objectMapper.writeValueAsString(requestBody);
-        return post(Global.LOGOUT_URL, json);
-
+        HttpResponse<String> response = post(Global.LOGOUT_URL, json);
+        int code = response.statusCode();
+        if (code != 200){
+            throw new ApiResponseException(code);
+        }
 
     }
 
