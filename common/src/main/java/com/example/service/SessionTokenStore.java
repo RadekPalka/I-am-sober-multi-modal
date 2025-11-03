@@ -74,11 +74,9 @@ public class SessionTokenStore {
             if (Files.exists(file)) {
                 Files.delete(file);
                 System.out.println("Session token file deleted: " + file.toAbsolutePath());
-            } else {
-                System.out.println("No session token file found to delete.");
             }
-        } catch (IOException e) {
-            System.err.println("Failed to delete session token file: " + e.getMessage());
+        } catch (IOException ignored) {
+
         }
     }
 
