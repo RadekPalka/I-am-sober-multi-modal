@@ -105,11 +105,7 @@ public class DashboardScreen implements Screen{
             }
             try {
                 apiClient.logout(token);
-                System.out.println("Logout successfully");
-                SessionTokenStore.clearToken();
-                session.clearUserCredentials();
-                addictionDtoList.clear();
-                return Route.HOME;
+                break;
             }
             catch (ApiResponseException e) {
                 if (i == 2){
