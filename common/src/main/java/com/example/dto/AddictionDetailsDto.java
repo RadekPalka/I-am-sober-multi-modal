@@ -12,6 +12,7 @@ public class AddictionDetailsDto {
     private int numberOfIncidents;
     private List<IncidentDto> lastIncidents;
 
+    public AddictionDetailsDto(){}
 
     public AddictionDetailsDto(long id, String name, BigDecimal costPerDay, Instant createdAt, int numberOfIncidents, List<IncidentDto> lastIncidents){
         this.id = id;
@@ -29,5 +30,28 @@ public class AddictionDetailsDto {
                 "Cost per day: " + costPerDay + "\n" +
                 "Created at: " + createdAt + "\n" +
                 "Number of incidents: " + numberOfIncidents;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+    public void setName(String name){
+        this.name = name;
+    }
+
+    public void setCostPerDay(BigDecimal costPerDay) {
+        this.costPerDay = costPerDay;
+    }
+
+    public void setCreatedAt(Instant createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public void setNumberOfIncidents(int numberOfIncidents) {
+        this.numberOfIncidents = numberOfIncidents;
+    }
+
+    public void setLastIncidents(List<IncidentDto> lastIncidents) {
+        this.lastIncidents = lastIncidents;
     }
 }

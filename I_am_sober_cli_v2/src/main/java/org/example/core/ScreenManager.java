@@ -31,6 +31,7 @@ public class ScreenManager {
     }
 
     public void runApp() {
+        System.out.println("Welcome in I am sober app");
         Route route = decideInitialRoute();
 
         while (route != Route.EXIT) {
@@ -50,6 +51,7 @@ public class ScreenManager {
             return Route.HOME;
         }
         try{
+            System.out.println("Loading data, please wait");
             String token = tokenOpt.get();
             UserDto userDto = apiClient.fetchUser(token);
             session.setLogin(userDto.getUsername());

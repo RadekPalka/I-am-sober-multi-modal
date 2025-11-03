@@ -156,7 +156,7 @@ public class DashboardScreen implements Screen{
     }
 
     private boolean isIndexInRange(int index){
-        return addictionDtoList.size() > index && index >0;
+        return addictionDtoList.size() > index && index >=0;
     }
 
     private long getAddictionId(int addictionIndex){
