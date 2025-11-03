@@ -43,7 +43,7 @@ public class LoginScreen implements Screen{
 
             System.out.println("Login Successfully");
 
-            session.setToken(token);
+            session.setLoginAndToken(login, token);
             if (rememberMe){
                 SessionTokenStore.saveToken(token);
             }

@@ -9,17 +9,15 @@ public class Session {
         return token;
     }
 
-    public void setToken(String token) {
-        this.token = token;
-    }
-
     public String getLogin() {
         return login;
     }
-
-    public void setLogin(String login) {
+    public void setLoginAndToken(String login, String token){
         this.login = login;
+        this.token = token;
     }
+
+
 
     public void clearUserCredentials(){
         login = null;

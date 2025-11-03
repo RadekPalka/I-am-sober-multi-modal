@@ -54,8 +54,7 @@ public class ScreenManager {
             System.out.println("Loading data, please wait");
             String token = tokenOpt.get();
             UserDto userDto = apiClient.fetchUser(token);
-            session.setLogin(userDto.getUsername());
-            session.setToken(token);
+            session.setLoginAndToken(userDto.getUsername(), token);
             return Route.DASHBOARD;
         }
         catch (ApiResponseException e) {
