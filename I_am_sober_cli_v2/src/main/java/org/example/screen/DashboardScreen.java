@@ -123,13 +123,14 @@ public class DashboardScreen implements Screen{
                 }
 
             }
-            SessionTokenStore.clearToken();
-            session.clearUserCredentials();
-            addictionDtoList.clear();
-            System.out.println("Logout successfully");
+
 
         }
-        return Route.DASHBOARD;
+        SessionTokenStore.clearToken();
+        session.clearUserCredentials();
+        addictionDtoList.clear();
+        System.out.println("Logout successfully");
+        return Route.HOME;
 
     }
 
