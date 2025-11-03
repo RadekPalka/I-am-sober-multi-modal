@@ -14,10 +14,10 @@ import java.util.List;
 import java.util.Scanner;
 
 public class DashboardScreen implements Screen{
-    private Scanner scanner;
-    private ApiClient apiClient;
-    private Session session;
-    private UiContext uiContext;
+    private final Scanner scanner;
+    private final ApiClient apiClient;
+    private final Session session;
+    private final UiContext uiContext;
     private List<AddictionDto> addictionDtoList =  new ArrayList<>();
     private int pageNumber = 0;
 

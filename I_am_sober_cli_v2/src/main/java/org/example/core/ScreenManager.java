@@ -17,8 +17,8 @@ import java.util.Optional;
 
 public class ScreenManager {
     private final Map<Route, Screen> screens = new EnumMap<>(Route.class);
-    private Session session;
-    private ApiClient apiClient;
+    private final Session session;
+    private final ApiClient apiClient;
 
     public ScreenManager(Session session, ApiClient apiClient) {
 

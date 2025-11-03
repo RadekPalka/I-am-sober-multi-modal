@@ -5,7 +5,7 @@ import org.example.util.InputValidator;
 import java.util.Scanner;
 
 public class HomeScreen implements Screen{
-    private Scanner scanner;
+    private final Scanner scanner;
 
 
     public HomeScreen(Scanner scanner){

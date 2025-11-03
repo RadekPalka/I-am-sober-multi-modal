@@ -14,15 +14,6 @@ public class AddictionDetailsDto {
 
     public AddictionDetailsDto(){}
 
-    public AddictionDetailsDto(long id, String name, BigDecimal costPerDay, Instant createdAt, int numberOfIncidents, List<IncidentDto> lastIncidents){
-        this.id = id;
-        this.name = name;
-        this.costPerDay = costPerDay;
-        this.createdAt = createdAt;
-        this.numberOfIncidents = numberOfIncidents;
-        this.lastIncidents = lastIncidents;
-    }
-
     @Override
     public String toString() {
         return "Addiction Details:\n" +
