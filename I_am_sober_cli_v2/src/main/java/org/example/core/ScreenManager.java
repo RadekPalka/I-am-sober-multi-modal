@@ -58,6 +58,9 @@ public class ScreenManager {
             return Route.DASHBOARD;
         }
         catch (ApiResponseException e) {
+            if (e.getStatusCode() == 401){
+                SessionTokenStore.clearToken();
+            }
             System.out.println(e.getMessage());
             return Route.HOME;
         }
