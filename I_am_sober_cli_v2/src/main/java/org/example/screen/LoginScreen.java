@@ -16,7 +16,6 @@ public class LoginScreen implements Screen{
     private Scanner scanner;
     private ApiClient apiClient;
     private Session session;
-    private Screen dashboardScreen;
 
 
     public LoginScreen(Scanner scanner, ApiClient apiClient, Session session){
@@ -70,7 +69,10 @@ public class LoginScreen implements Screen{
         while (true){
             System.out.print("Enter your login: ");
             String input = scanner.nextLine();
-            if (UserValidator.isUserInputValid(input)){
+            if (InputValidator.isQuitCommand(input)){
+                System.exit(0);
+            }
+            else if (UserValidator.isUserInputValid(input)){
                 return input;
             }
             System.out.println("Your login must have at least five characters");

@@ -64,6 +64,7 @@ public class ApiClient  {
         HttpResponse<String> response = post(Global.LOGIN_URL, json);
         int code = response.statusCode();
         if (code == 200){
+            System.out.println("200");
             TokenDto tokenDto = parseJson(response.body(), new TypeReference<TokenDto>() {});
             return tokenDto.getSessionToken();
         }

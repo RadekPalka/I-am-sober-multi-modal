@@ -7,6 +7,7 @@ import com.example.exception.ApiResponseException;
 import com.example.routing.Route;
 import com.example.service.SessionTokenStore;
 import org.example.context.UiContext;
+import org.example.util.InputValidator;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -66,7 +67,8 @@ public class DashboardScreen implements Screen{
     }
 
     private boolean isMoreAddictionsAvailable(){
-        return addictionDtoList.size() % 10 == 0;
+        int size = addictionDtoList.size();
+        return size != 0 && size % 10 == 0;
     }
 
     private void showMenu(){
@@ -86,6 +88,7 @@ public class DashboardScreen implements Screen{
             System.out.println("m-> more load more addictions");
         }
         System.out.println("l-> logout");
+        System.out.println("q-> quit");
     }
 
     private String askUserForOption(){
@@ -147,6 +150,9 @@ public class DashboardScreen implements Screen{
             } else if (isMoreAddictionsAvailable() && option.equalsIgnoreCase("m")) {
                 loadAddictions();
                 return Route.DASHBOARD;
+            }
+            else if (InputValidator.isQuitCommand(option)){
+                return Route.EXIT;
             }
             System.out.println("Invalid data. Please try again.");
             return Route.DASHBOARD;
