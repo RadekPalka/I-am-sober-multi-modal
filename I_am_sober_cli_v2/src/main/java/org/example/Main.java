@@ -20,7 +20,7 @@ public class Main {
         HttpClient http = HttpClients.defaultClient();
         ObjectMapper json = Jsons.defaultMapper();
         ApiClient apiClient = new ApiClient(http, json);
-        BasicRoutingData basicRoutingData = new BasicRoutingData();
+        RoutingData routingData = new RoutingData();
 
 
         Screen registerScreen = new RegisterScreen(scanner, apiClient);
@@ -29,7 +29,7 @@ public class Main {
         Screen homeScreen = new HomeScreen(scanner);
         Screen addictionDetailsScreen = new AddictionDetailsScreen(apiClient, session, scanner);
 
-        ScreenManager screenManager = new ScreenManager(session, apiClient, basicRoutingData);
+        ScreenManager screenManager = new ScreenManager(session, apiClient, routingData);
         screenManager.register(Route.HOME, homeScreen);
         screenManager.register(Route.LOGIN, loginScreen);
         screenManager.register(Route.REGISTER, registerScreen);

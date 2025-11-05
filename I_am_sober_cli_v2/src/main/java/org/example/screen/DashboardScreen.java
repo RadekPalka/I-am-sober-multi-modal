@@ -28,7 +28,7 @@ public class DashboardScreen implements Screen{
     }
 
     @Override
-    public BasicRoutingData init()  {
+    public RoutingData init()  {
         greet();
         if (addictionDtoList.isEmpty()){
             loadAddictions();
@@ -97,7 +97,7 @@ public class DashboardScreen implements Screen{
         return input.matches("\\d+");
     }
 
-    private BasicRoutingData handleLogout() throws InterruptedException {
+    private RoutingData handleLogout() throws InterruptedException {
         String token = session.getToken();
         for (int i = 0; i< 3; i++){
             if (i > 0){
@@ -126,17 +126,17 @@ public class DashboardScreen implements Screen{
         session.clearUserCredentials();
         addictionDtoList.clear();
         System.out.println("Logout successfully");
-        return new BasicRoutingData(Route.HOME);
+        return new RoutingData(Route.HOME);
 
     }
 
-    private BasicRoutingData checkUserOption(String option)  {
+    private RoutingData checkUserOption(String option)  {
         try{
             if (isNumeric(option)){
                 int addictionIndex = Integer.parseInt(option) -1;
                 if (isIndexInRange(addictionIndex)){
                     long id = getAddictionId(addictionIndex);
-                    return new BasicRoutingData(Route.ADDICTION_DETAILS, id);
+                    return new RoutingData(Route.ADDICTION_DETAILS, id);
                 }
 
             }
@@ -145,13 +145,13 @@ public class DashboardScreen implements Screen{
 
             } else if (isMoreAddictionsAvailable() && option.equalsIgnoreCase("m")) {
                 loadAddictions();
-                return new BasicRoutingData(Route.DASHBOARD);
+                return new RoutingData(Route.DASHBOARD);
             }
             else if (InputValidator.isQuitCommand(option)){
-                return new BasicRoutingData(Route.EXIT);
+                return new RoutingData(Route.EXIT);
             }
             System.out.println("Invalid data. Please try again.");
-            return new BasicRoutingData(Route.DASHBOARD);
+            return new RoutingData(Route.DASHBOARD);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

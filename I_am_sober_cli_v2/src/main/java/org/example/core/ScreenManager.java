@@ -9,7 +9,7 @@ import com.example.routing.Route;
 import com.example.service.SessionTokenStore;
 
 import org.example.screen.AddictionDetailsScreen;
-import org.example.screen.BasicRoutingData;
+import org.example.screen.RoutingData;
 import org.example.screen.Screen;
 
 import java.io.IOException;
@@ -21,12 +21,12 @@ public class ScreenManager {
     private final Map<Route, Screen> screens = new EnumMap<>(Route.class);
     private final Session session;
     private final ApiClient apiClient;
-    private final BasicRoutingData basicRoutingData;
+    private final RoutingData routingData;
 
-    public ScreenManager(Session session, ApiClient apiClient, BasicRoutingData basicRoutingData) {
+    public ScreenManager(Session session, ApiClient apiClient, RoutingData routingData) {
         this.session = session;
         this.apiClient = apiClient;
-        this.basicRoutingData = basicRoutingData;
+        this.routingData = routingData;
     }
 
     public void register(Route route, Screen screen) {
@@ -35,19 +35,19 @@ public class ScreenManager {
 
     public void runApp() {
         System.out.println("Welcome in I am sober app");
-        basicRoutingData.setRoute(decideInitialRoute());
-        System.out.println(basicRoutingData.getRoute());
+        routingData.setRoute(decideInitialRoute());
+        System.out.println(routingData.getRoute());
 
-        while (!basicRoutingData.shouldExitApp()) {
-            Screen screen = screens.get(basicRoutingData.getRoute());
+        while (!routingData.shouldExitApp()) {
+            Screen screen = screens.get(routingData.getRoute());
             if (screen == null) {
-                System.out.println("No screen registered for route: " + basicRoutingData.getRoute());
+                System.out.println("No screen registered for route: " + routingData.getRoute());
                 break;
             }
             if (screen instanceof AddictionDetailsScreen){
-                ((AddictionDetailsScreen) screen).setId(basicRoutingData.getAddictionDetailsId());
+                ((AddictionDetailsScreen) screen).setId(routingData.getAddictionDetailsId());
             }
-            basicRoutingData.setRoute(screen.init().getRoute());
+            routingData.setRoute(screen.init().getRoute());
 
 
         }

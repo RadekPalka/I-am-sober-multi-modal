@@ -2,17 +2,17 @@ package org.example.screen;
 
 import com.example.routing.Route;
 
-public class BasicRoutingData {
+public class RoutingData {
     private Route route;
     private Long addictionDetailsId;
 
-    public BasicRoutingData(){}
+    public RoutingData(){}
 
-    public BasicRoutingData(Route route){
+    public RoutingData(Route route){
         this.route = route;
     }
 
-    public BasicRoutingData(Route route, Long id){
+    public RoutingData(Route route, Long id){
         this.route = route;
         this.addictionDetailsId = id;
     }

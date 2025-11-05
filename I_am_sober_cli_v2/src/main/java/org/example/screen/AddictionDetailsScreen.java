@@ -22,10 +22,10 @@ public class AddictionDetailsScreen implements Screen{
         this.scanner = scanner;
     }
     @Override
-    public BasicRoutingData init() {
+    public RoutingData init() {
         loadAddictionDetails();
         id = null;
-        return new BasicRoutingData(Route.DASHBOARD);
+        return new RoutingData(Route.DASHBOARD);
     }
 
     public void setId(Long id){

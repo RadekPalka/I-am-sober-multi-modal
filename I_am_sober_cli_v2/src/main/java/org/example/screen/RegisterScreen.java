@@ -21,16 +21,16 @@ public class RegisterScreen implements Screen{
     }
 
     @Override
-    public BasicRoutingData init(){
+    public RoutingData init(){
         displayLabel();
         String login = getLoginFromUser();
         String password = getPasswordFromUser();
         boolean isPasswordValid = confirmPassword(password);
         if (!isPasswordValid){
             System.out.println("Invalid data. Please try again");
-            return new BasicRoutingData(Route.REGISTER);
+            return new RoutingData(Route.REGISTER);
         }
-        return new BasicRoutingData(handleRegistration(login, password)) ;
+        return new RoutingData(handleRegistration(login, password)) ;
 
     }
 

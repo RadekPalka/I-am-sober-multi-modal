@@ -50,9 +50,9 @@ public class HomeScreen implements Screen{
 
 
     @Override
-    public BasicRoutingData init() {
+    public RoutingData init() {
         showMenu();
         String option = getOptionFromUser();
-        return new BasicRoutingData(checkUserOption(option));
+        return new RoutingData(checkUserOption(option));
     }
 }
