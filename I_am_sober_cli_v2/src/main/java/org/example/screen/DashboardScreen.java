@@ -6,7 +6,6 @@ import com.example.client.ApiClient;
 import com.example.exception.ApiResponseException;
 import com.example.routing.Route;
 import com.example.service.SessionTokenStore;
-import org.example.context.UiContext;
 import org.example.util.InputValidator;
 
 import java.io.IOException;
@@ -18,20 +17,18 @@ public class DashboardScreen implements Screen{
     private final Scanner scanner;
     private final ApiClient apiClient;
     private final Session session;
-    private final UiContext uiContext;
     private List<AddictionDto> addictionDtoList =  new ArrayList<>();
     private int pageNumber = 0;
 
 
-    public DashboardScreen(Scanner scanner, ApiClient apiClient, Session session, UiContext uiContext){
+    public DashboardScreen(Scanner scanner, ApiClient apiClient, Session session){
         this.scanner = scanner;
         this.apiClient = apiClient;
         this.session = session;
-        this.uiContext = uiContext;
     }
 
     @Override
-    public Route init()  {
+    public BasicRoutingData init()  {
         greet();
         if (addictionDtoList.isEmpty()){
             loadAddictions();
@@ -100,7 +97,7 @@ public class DashboardScreen implements Screen{
         return input.matches("\\d+");
     }
 
-    private Route handleLogout() throws InterruptedException {
+    private BasicRoutingData handleLogout() throws InterruptedException {
         String token = session.getToken();
         for (int i = 0; i< 3; i++){
             if (i > 0){
@@ -129,18 +126,17 @@ public class DashboardScreen implements Screen{
         session.clearUserCredentials();
         addictionDtoList.clear();
         System.out.println("Logout successfully");
-        return Route.HOME;
+        return new BasicRoutingData(Route.HOME);
 
     }
 
-    private Route checkUserOption(String option)  {
+    private BasicRoutingData checkUserOption(String option)  {
         try{
             if (isNumeric(option)){
                 int addictionIndex = Integer.parseInt(option) -1;
                 if (isIndexInRange(addictionIndex)){
                     long id = getAddictionId(addictionIndex);
-                    uiContext.setSelectedAddictionId(id);
-                    return Route.ADDICTION_DETAILS;
+                    return new BasicRoutingData(Route.ADDICTION_DETAILS, id);
                 }
 
             }
@@ -149,13 +145,13 @@ public class DashboardScreen implements Screen{
 
             } else if (isMoreAddictionsAvailable() && option.equalsIgnoreCase("m")) {
                 loadAddictions();
-                return Route.DASHBOARD;
+                return new BasicRoutingData(Route.DASHBOARD);
             }
             else if (InputValidator.isQuitCommand(option)){
-                return Route.EXIT;
+                return new BasicRoutingData(Route.EXIT);
             }
             System.out.println("Invalid data. Please try again.");
-            return Route.DASHBOARD;
+            return new BasicRoutingData(Route.DASHBOARD);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

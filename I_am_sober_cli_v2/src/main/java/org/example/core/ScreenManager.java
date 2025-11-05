@@ -8,6 +8,8 @@ import com.example.exception.ApiResponseException;
 import com.example.routing.Route;
 import com.example.service.SessionTokenStore;
 
+import org.example.screen.AddictionDetailsScreen;
+import org.example.screen.BasicRoutingData;
 import org.example.screen.Screen;
 
 import java.io.IOException;
@@ -19,11 +21,12 @@ public class ScreenManager {
     private final Map<Route, Screen> screens = new EnumMap<>(Route.class);
     private final Session session;
     private final ApiClient apiClient;
+    private final BasicRoutingData basicRoutingData;
 
-    public ScreenManager(Session session, ApiClient apiClient) {
-
+    public ScreenManager(Session session, ApiClient apiClient, BasicRoutingData basicRoutingData) {
         this.session = session;
         this.apiClient = apiClient;
+        this.basicRoutingData = basicRoutingData;
     }
 
     public void register(Route route, Screen screen) {
@@ -32,15 +35,21 @@ public class ScreenManager {
 
     public void runApp() {
         System.out.println("Welcome in I am sober app");
-        Route route = decideInitialRoute();
+        basicRoutingData.setRoute(decideInitialRoute());
+        System.out.println(basicRoutingData.getRoute());
 
-        while (route != Route.EXIT) {
-            Screen screen = screens.get(route);
+        while (!basicRoutingData.shouldExitApp()) {
+            Screen screen = screens.get(basicRoutingData.getRoute());
             if (screen == null) {
-                System.out.println("No screen registered for route: " + route);
+                System.out.println("No screen registered for route: " + basicRoutingData.getRoute());
                 break;
             }
-            route = screen.init();
+            if (screen instanceof AddictionDetailsScreen){
+                ((AddictionDetailsScreen) screen).setId(basicRoutingData.getAddictionDetailsId());
+            }
+            basicRoutingData.setRoute(screen.init().getRoute());
+
+
         }
         System.out.println("Bye!");
     }

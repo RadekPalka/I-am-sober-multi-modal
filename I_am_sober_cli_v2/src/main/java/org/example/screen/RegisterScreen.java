@@ -1,15 +1,12 @@
 package org.example.screen;
 
-import com.example.auth.Session;
 import com.example.client.ApiClient;
 import com.example.exception.ApiResponseException;
-import com.example.global.Global;
 import com.example.routing.Route;
 import com.example.util.UserValidator;
 import org.example.util.InputValidator;
 
 import java.io.IOException;
-import java.net.http.HttpResponse;
 import java.util.Scanner;
 
 public class RegisterScreen implements Screen{
@@ -24,16 +21,16 @@ public class RegisterScreen implements Screen{
     }
 
     @Override
-    public Route init(){
+    public BasicRoutingData init(){
         displayLabel();
         String login = getLoginFromUser();
         String password = getPasswordFromUser();
         boolean isPasswordValid = confirmPassword(password);
         if (!isPasswordValid){
             System.out.println("Invalid data. Please try again");
-            return Route.REGISTER;
+            return new BasicRoutingData(Route.REGISTER);
         }
-        return handleRegistration(login, password);
+        return new BasicRoutingData(handleRegistration(login, password)) ;
 
     }
 

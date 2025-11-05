@@ -5,32 +5,37 @@ import com.example.client.ApiClient;
 import com.example.dto.AddictionDetailsDto;
 import com.example.exception.ApiResponseException;
 import com.example.routing.Route;
-import org.example.context.UiContext;
 import java.io.IOException;
 import java.util.Scanner;
 
 public class AddictionDetailsScreen implements Screen{
     private AddictionDetailsDto addictionDetailsDto;
-    private UiContext uiContext;
     private ApiClient apiClient;
     private Session session;
     private Scanner scanner;
+    private Long id;
 
-    public AddictionDetailsScreen(UiContext uiContext, ApiClient apiClient, Session session, Scanner scanner){
-        this.uiContext = uiContext;
+    public AddictionDetailsScreen(ApiClient apiClient, Session session, Scanner scanner){
+
         this.apiClient = apiClient;
         this.session = session;
         this.scanner = scanner;
     }
     @Override
-    public Route init() {
+    public BasicRoutingData init() {
         loadAddictionDetails();
-        return Route.DASHBOARD;
+        id = null;
+        return new BasicRoutingData(Route.DASHBOARD);
     }
+
+    public void setId(Long id){
+        this.id = id;
+    }
+    public void test(){}
 
     private void loadAddictionDetails(){
         try{
-            addictionDetailsDto = apiClient.getAddictionDetails(session.getToken(), uiContext.getSelectedAddictionId());
+            addictionDetailsDto = apiClient.getAddictionDetails(session.getToken(), id);
             System.out.println(addictionDetailsDto.toString());
             System.out.println("Press any key to return to Dashboard");
             scanner.nextLine();

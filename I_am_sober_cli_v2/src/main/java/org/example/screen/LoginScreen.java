@@ -25,14 +25,14 @@ public class LoginScreen implements Screen{
     }
 
     @Override
-    public Route init() {
+    public BasicRoutingData init() {
         displayLabel();
         String login = getLoginFromUser();
         String password = getPasswordFromUser();
 
         boolean rememberMe = promptRememberSession();
 
-        return handleLogin(login, password, rememberMe);
+        return new BasicRoutingData(handleLogin(login, password, rememberMe));
 
     }
 
