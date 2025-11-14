@@ -6,6 +6,7 @@ import com.example.dto.TokenDto;
 import com.example.dto.UserDto;
 import com.example.exception.ApiResponseException;
 import com.example.global.Global;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
@@ -13,6 +14,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.time.Instant;
 import java.util.*;
 
 public class ApiClient  {
@@ -64,7 +66,6 @@ public class ApiClient  {
         HttpResponse<String> response = post(Global.LOGIN_URL, json);
         int code = response.statusCode();
         if (code == 200){
-            System.out.println("200");
             TokenDto tokenDto = parseJson(response.body(), new TypeReference<TokenDto>() {});
             return tokenDto.getSessionToken();
         }
@@ -125,6 +126,22 @@ public class ApiClient  {
         int code = response.statusCode();
         if (code == 200){
             return parseJson(response.body(), new TypeReference<AddictionDetailsDto>(){});
+        }
+        throw new ApiResponseException(code);
+    }
+
+    public void createAddiction(String token, String addictionName, float addictionDailyCost, Instant detoxStartDate) throws IOException, InterruptedException, ApiResponseException {
+
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("name", addictionName);
+        requestBody.put("costPerDay", addictionDailyCost);
+        requestBody.put("detoxStartDay", detoxStartDate);
+
+        String json = objectMapper.writeValueAsString(requestBody);
+        HttpResponse<String> response = post(Global.PAGINATED_ADDICTIONS_URL, json);
+        int code = response.statusCode();
+        if (code == 200){
+            return;
         }
         throw new ApiResponseException(code);
     }

@@ -84,6 +84,7 @@ public class DashboardScreen implements Screen{
         if (isMoreAddictionsAvailable()){
             System.out.println("m-> more load more addictions");
         }
+        System.out.println("a-> Add new addiction");
         System.out.println("l-> logout");
         System.out.println("q-> quit");
     }
@@ -146,6 +147,9 @@ public class DashboardScreen implements Screen{
             } else if (isMoreAddictionsAvailable() && option.equalsIgnoreCase("m")) {
                 loadAddictions();
                 return new RoutingData(Route.DASHBOARD);
+            }
+            else if (option.equalsIgnoreCase("a")){
+                return new RoutingData(Route.ADD_ADDICTION);
             }
             else if (InputValidator.isQuitCommand(option)){
                 return new RoutingData(Route.EXIT);

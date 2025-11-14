@@ -28,6 +28,7 @@ public class Main {
         Screen dashboard = new DashboardScreen(scanner, apiClient, session);
         Screen homeScreen = new HomeScreen(scanner);
         Screen addictionDetailsScreen = new AddictionDetailsScreen(apiClient, session, scanner);
+        Screen addAddictionScreen = new AddAddictionScreen(scanner, apiClient, session);
 
         ScreenManager screenManager = new ScreenManager(session, apiClient, routingData);
         screenManager.register(Route.HOME, homeScreen);
@@ -35,6 +36,7 @@ public class Main {
         screenManager.register(Route.REGISTER, registerScreen);
         screenManager.register(Route.DASHBOARD, dashboard);
         screenManager.register(Route.ADDICTION_DETAILS, addictionDetailsScreen);
+        screenManager.register(Route.ADD_ADDICTION, addAddictionScreen);
 
         screenManager.runApp();
 

@@ -13,9 +13,9 @@ import java.util.Scanner;
 
 public class LoginScreen implements Screen{
 
-    private Scanner scanner;
-    private ApiClient apiClient;
-    private Session session;
+    private final Scanner scanner;
+    private final ApiClient apiClient;
+    private final Session session;
 
 
     public LoginScreen(Scanner scanner, ApiClient apiClient, Session session){
