@@ -39,6 +39,8 @@ public class AddAddictionScreen implements Screen{
         try{
             apiClient.createAddiction(session.getToken(), addictionNameOpt.get(), addictionDailyCostOpt.get(), detoxStartDateOpt.get());
             System.out.println("Addiction created successfully");
+            session.markAddictionsForReload();
+            return Route.DASHBOARD;
         }
         catch (ApiResponseException e) {
             System.out.println(e.getMessage());
@@ -48,7 +50,6 @@ public class AddAddictionScreen implements Screen{
             System.out.println("Network error. Please check your connection.");
             return Route.ADD_ADDICTION;
         }
-        return null;
     }
 
     private Optional<String> getAddictionName(){

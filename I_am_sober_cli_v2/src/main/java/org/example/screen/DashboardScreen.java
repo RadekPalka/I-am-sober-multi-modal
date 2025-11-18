@@ -30,7 +30,7 @@ public class DashboardScreen implements Screen{
     @Override
     public RoutingData init()  {
         greet();
-        if (addictionDtoList.isEmpty()){
+        if (session.shouldReloadAddictions()){
             loadAddictions();
         }
 
@@ -51,14 +51,20 @@ public class DashboardScreen implements Screen{
     private void loadAddictions(){
         String token = session.getToken();
         try{
-            addictionDtoList = apiClient.getPaginatedAddictions(token, pageNumber);
+            ArrayList<AddictionDto> page = apiClient.getPaginatedAddictions(token, pageNumber);
+            addictionDtoList.addAll(page);
             pageNumber ++;
+            session.clearAddictionsReloadFlag();
         }
         catch (ApiResponseException e) {
             System.out.println(e.getMessage());
+            System.out.println("Press Enter to try again");
+            scanner.nextLine();
         }
         catch (IOException | InterruptedException e){
             System.out.println("Network error. Please check your connection.");
+            System.out.println("Press Enter to try again");
+            scanner.nextLine();
         }
 
     }
