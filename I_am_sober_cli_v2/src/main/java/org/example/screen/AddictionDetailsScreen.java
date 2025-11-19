@@ -31,7 +31,6 @@ public class AddictionDetailsScreen implements Screen{
     public void setId(Long id){
         this.id = id;
     }
-    public void test(){}
 
     private void loadAddictionDetails(){
         try{

@@ -47,7 +47,9 @@ public class ScreenManager {
             if (screen instanceof AddictionDetailsScreen){
                 ((AddictionDetailsScreen) screen).setId(routingData.getAddictionDetailsId());
             }
-            routingData.setRoute(screen.init().getRoute());
+            RoutingData next = screen.init();
+            routingData.setRoute(next.getRoute());
+            routingData.setAddictionDetailsId(next.getAddictionDetailsId());
 
 
         }
