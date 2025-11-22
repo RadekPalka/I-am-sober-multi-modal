@@ -6,7 +6,6 @@ import com.example.dto.TokenDto;
 import com.example.dto.UserDto;
 import com.example.exception.ApiResponseException;
 import com.example.global.Global;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
@@ -14,7 +13,6 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.time.Instant;
 import java.util.*;
 
 public class ApiClient  {
@@ -45,7 +43,7 @@ public class ApiClient  {
 
         HttpResponse<String> response = post(Global.REGISTER_URL, json);
         int code = response.statusCode();
-        if (code == 201){
+        if (code >= 200 && code < 300){
             return;
         }
         throw new ApiResponseException(code);
@@ -65,7 +63,7 @@ public class ApiClient  {
         String json = objectMapper.writeValueAsString(requestBody);
         HttpResponse<String> response = post(Global.LOGIN_URL, json);
         int code = response.statusCode();
-        if (code == 200){
+        if (code >= 200 && code < 300){
             TokenDto tokenDto = parseJson(response.body(), new TypeReference<TokenDto>() {});
             return tokenDto.getSessionToken();
         }
@@ -85,7 +83,7 @@ public class ApiClient  {
                     )
             );
         int code = response.statusCode();
-        if (code == 200){
+        if (code >= 200 && code < 300){
             return parseJson(response.body(), new TypeReference<UserDto>() {
             });
         }
@@ -107,7 +105,7 @@ public class ApiClient  {
                     "Accept", "application/json"
             ));
         int code = response.statusCode();
-        if (code == 200){
+        if (code >= 200 && code < 300){
             return parseJson(response.body(), new TypeReference<ArrayList<AddictionDto>>(){});
         }
         throw new ApiResponseException(code);
@@ -124,23 +122,30 @@ public class ApiClient  {
                     "Accept", "application/json"
             ));
         int code = response.statusCode();
-        if (code == 200){
+        if (code >= 200 && code < 300){
             return parseJson(response.body(), new TypeReference<AddictionDetailsDto>(){});
         }
         throw new ApiResponseException(code);
     }
 
-    public void createAddiction(String token, String addictionName, float addictionDailyCost, Instant detoxStartDate) throws IOException, InterruptedException, ApiResponseException {
+    public void createAddiction(String token, String addictionName, float addictionDailyCost, String detoxStartDate) throws IOException, InterruptedException, ApiResponseException {
 
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("name", addictionName);
         requestBody.put("costPerDay", addictionDailyCost);
-        requestBody.put("detoxStartDay", detoxStartDate);
+        requestBody.put("detoxStartDate", detoxStartDate);
 
         String json = objectMapper.writeValueAsString(requestBody);
-        HttpResponse<String> response = post(Global.PAGINATED_ADDICTIONS_URL, json);
+        HttpResponse<String> response = post(
+                Global.PAGINATED_ADDICTIONS_URL,
+                Map.of(
+                        "Authorization", token.trim(),
+                        "Accept", "application/json"
+                ),
+                json
+        );
         int code = response.statusCode();
-        if (code == 200){
+        if (code >= 200 && code < 300){
             return;
         }
         throw new ApiResponseException(code);
@@ -154,9 +159,10 @@ public class ApiClient  {
         String json = objectMapper.writeValueAsString(requestBody);
         HttpResponse<String> response = post(Global.LOGOUT_URL, json);
         int code = response.statusCode();
-        if (code != 200){
-            throw new ApiResponseException(code);
+        if (code >= 200 && code < 300){
+            return;
         }
+        throw new ApiResponseException(code);
 
     }
 
@@ -189,6 +195,25 @@ public class ApiClient  {
 
         return http.send(request, HttpResponse.BodyHandlers.ofString());
     }
+
+    private HttpResponse<String> post(String url, Map<String, String> headers, String jsonBody)
+            throws IOException, InterruptedException {
+
+        HttpRequest.Builder b = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(jsonBody));
+
+        if (headers != null) {
+            headers.forEach((k, v) -> {
+                if (v != null) b.header(k, v);
+            });
+        }
+
+        HttpRequest request = b.build();
+        return http.send(request, HttpResponse.BodyHandlers.ofString());
+    }
+
 
 
 

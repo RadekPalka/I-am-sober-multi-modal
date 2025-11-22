@@ -6,7 +6,7 @@ import com.example.exception.ApiResponseException;
 import com.example.routing.Route;
 
 import java.io.IOException;
-import java.time.Instant;
+import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.Optional;
 import java.util.Scanner;
@@ -31,7 +31,7 @@ public class AddAddictionScreen implements Screen{
     private Route handleCreateAddiction(){
         Optional<String> addictionNameOpt= getAddictionName();
         Optional<Float> addictionDailyCostOpt = getAddictionDailyCost();
-        Optional<Instant> detoxStartDateOpt = getDetoxStartDate();
+        Optional<String> detoxStartDateOpt = getDetoxStartDate();
 
         if(addictionNameOpt.isEmpty() || addictionDailyCostOpt.isEmpty() || detoxStartDateOpt.isEmpty()){
             return Route.DASHBOARD;
@@ -43,6 +43,7 @@ public class AddAddictionScreen implements Screen{
             return Route.DASHBOARD;
         }
         catch (ApiResponseException e) {
+            System.out.println("Error: " +e.getStatusCode());
             System.out.println(e.getMessage());
             return Route.ADD_ADDICTION;
         }
@@ -77,16 +78,16 @@ public class AddAddictionScreen implements Screen{
         }
     }
 
-    private Optional<Instant> getDetoxStartDate(){
-        System.out.println("What's the detox start date?");
+    private Optional<String> getDetoxStartDate(){
+        System.out.println("What's the detox start date? (yyyy-MM-dd)");
         String input = scanner.nextLine();
         try{
-            Instant detoxStartDate = Instant.parse(input);
-            if (detoxStartDate.isAfter(Instant.now())){
+            LocalDate date = LocalDate.parse(input);
+            if (date.isAfter(LocalDate.now())){
                 System.out.println("Date shouldn't be in the future.");
                 return Optional.empty();
             }
-            return Optional.of(detoxStartDate);
+            return Optional.of(input);
         } catch (DateTimeParseException e) {
             System.out.println("Wrong data format");
             return Optional.empty();
