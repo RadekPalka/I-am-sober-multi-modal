@@ -42,11 +42,7 @@ public class ApiClient  {
         String json = objectMapper.writeValueAsString(requestBody);
 
         HttpResponse<String> response = post(Global.REGISTER_URL, json);
-        int code = response.statusCode();
-        if (code >= 200 && code < 300){
-            return;
-        }
-        throw new ApiResponseException(code);
+        ensureSuccess(response);
 
 
 
@@ -62,13 +58,9 @@ public class ApiClient  {
 
         String json = objectMapper.writeValueAsString(requestBody);
         HttpResponse<String> response = post(Global.LOGIN_URL, json);
-        int code = response.statusCode();
-        if (code >= 200 && code < 300){
-            TokenDto tokenDto = parseJson(response.body(), new TypeReference<TokenDto>() {});
-            return tokenDto.getSessionToken();
-        }
-        throw new ApiResponseException(code);
-
+        ensureSuccess(response);
+        TokenDto tokenDto = parseJson(response.body(), new TypeReference<TokenDto>() {});
+        return tokenDto.getSessionToken();
     }
 
     public UserDto fetchUser(String token) throws IOException, InterruptedException, ApiResponseException {
@@ -82,13 +74,9 @@ public class ApiClient  {
                             "Accept", "application/json"
                     )
             );
-        int code = response.statusCode();
-        if (code >= 200 && code < 300){
-            return parseJson(response.body(), new TypeReference<UserDto>() {
-            });
-        }
-        throw new ApiResponseException(code);
-
+        ensureSuccess(response);
+        return parseJson(response.body(), new TypeReference<UserDto>() {
+        });
 
 
 
@@ -104,11 +92,8 @@ public class ApiClient  {
                     "Authorization", token.trim(),
                     "Accept", "application/json"
             ));
-        int code = response.statusCode();
-        if (code >= 200 && code < 300){
-            return parseJson(response.body(), new TypeReference<ArrayList<AddictionDto>>(){});
-        }
-        throw new ApiResponseException(code);
+        ensureSuccess(response);
+        return parseJson(response.body(), new TypeReference<ArrayList<AddictionDto>>(){});
 
     }
 
@@ -121,11 +106,8 @@ public class ApiClient  {
                     "Authorization", token.trim(),
                     "Accept", "application/json"
             ));
-        int code = response.statusCode();
-        if (code >= 200 && code < 300){
-            return parseJson(response.body(), new TypeReference<AddictionDetailsDto>(){});
-        }
-        throw new ApiResponseException(code);
+        ensureSuccess(response);
+        return parseJson(response.body(), new TypeReference<AddictionDetailsDto>(){});
     }
 
     public void createAddiction(String token, String addictionName, float addictionDailyCost, String detoxStartDate) throws IOException, InterruptedException, ApiResponseException {
@@ -144,11 +126,7 @@ public class ApiClient  {
                 ),
                 json
         );
-        int code = response.statusCode();
-        if (code >= 200 && code < 300){
-            return;
-        }
-        throw new ApiResponseException(code);
+        ensureSuccess(response);
     }
 
     public void logout(String token) throws IOException, InterruptedException, ApiResponseException {
@@ -158,11 +136,7 @@ public class ApiClient  {
 
         String json = objectMapper.writeValueAsString(requestBody);
         HttpResponse<String> response = post(Global.LOGOUT_URL, json);
-        int code = response.statusCode();
-        if (code >= 200 && code < 300){
-            return;
-        }
-        throw new ApiResponseException(code);
+        ensureSuccess(response);
 
     }
 
@@ -214,6 +188,12 @@ public class ApiClient  {
         return http.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
+    private void ensureSuccess(HttpResponse<String> response) throws ApiResponseException {
+        int code = response.statusCode();
+        if (code < 200 || code >= 300){
+            throw new ApiResponseException(code, response.body());
+        }
+    }
 
 
 

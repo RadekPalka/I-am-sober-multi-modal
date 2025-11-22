@@ -87,10 +87,11 @@ public class RegisterScreen implements Screen{
     private Route handleRegistration(String login, String password){
         try{
             apiClient.register(login, password);
+            System.out.println("Account created successfully. You can now log in.");
             return Route.LOGIN;
         }
         catch (ApiResponseException e){
-            System.out.println(e.getMessage());
+            System.out.println(errorMessageForRegister(e));
             return Route.REGISTER;
         }
         catch(IOException | InterruptedException e){
@@ -99,6 +100,16 @@ public class RegisterScreen implements Screen{
         }
 
 
+    }
+
+    private String errorMessageForRegister(ApiResponseException e) {
+        int status = e.getStatusCode();
+        return switch (status) {
+            case 400 -> "Invalid registration data. Please check your login and password and try again.";
+            case 409 -> "This login is already taken. Please choose a different one.";
+            case 500 -> "Server error while creating your account. Please try again later.";
+            default -> "Unexpected error (" + status + "). Please try again.";
+        };
     }
 
 }

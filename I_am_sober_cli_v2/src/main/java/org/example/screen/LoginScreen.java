@@ -46,11 +46,12 @@ public class LoginScreen implements Screen{
             if (rememberMe){
                 SessionTokenStore.saveToken(token);
             }
-                return Route.DASHBOARD;
+            SessionTokenStore.clearToken();
+            return Route.DASHBOARD;
 
         }
         catch (ApiResponseException e) {
-            System.out.println(e.getMessage());
+            System.out.println(errorMessageForLogin(e));
             return Route.LOGIN;
         }
         catch (IOException | InterruptedException e){
@@ -112,6 +113,14 @@ public class LoginScreen implements Screen{
         return false;
     }
 
-
-
+    private String errorMessageForLogin(ApiResponseException e) {
+        return switch (e.getStatusCode()) {
+            case 400 -> "Invalid login or password format. Please check your input and try again.";
+            case 401 -> "Incorrect login or password.";
+            case 403 -> "You do not have permission to perform this action.";
+            case 404 -> "Requested resource was not found.";
+            case 500 -> "Server error. Please try again later.";
+            default -> "Unexpected error (" + e.getStatusCode() + "). Please try again.";
+        };
+    }
 }

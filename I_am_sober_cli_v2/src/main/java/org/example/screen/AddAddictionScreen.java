@@ -43,8 +43,7 @@ public class AddAddictionScreen implements Screen{
             return Route.DASHBOARD;
         }
         catch (ApiResponseException e) {
-            System.out.println("Error: " +e.getStatusCode());
-            System.out.println(e.getMessage());
+            System.out.println(errorMessageForAddAddiction(e));
             return Route.ADD_ADDICTION;
         }
         catch (IOException | InterruptedException e){
@@ -93,4 +92,19 @@ public class AddAddictionScreen implements Screen{
             return Optional.empty();
         }
     }
+
+    private String errorMessageForAddAddiction(ApiResponseException e) {
+        int status = e.getStatusCode();
+
+        return switch (status) {
+            case 400 -> "Invalid addiction data. Please check the form and try again.";
+            case 401 -> "Your session has expired. Please log in again.";
+            case 403 -> "You do not have permission to create addictions.";
+            case 404 -> "Server endpoint not found.";
+            case 409 -> "An addiction with this name already exists.";
+            case 500 -> "Server error while creating the addiction. Please try again later.";
+            default -> "Unexpected error (" + status + "). Please try again.";
+        };
+    }
+
 }

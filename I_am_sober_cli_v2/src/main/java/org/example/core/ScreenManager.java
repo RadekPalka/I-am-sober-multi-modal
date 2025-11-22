@@ -72,7 +72,7 @@ public class ScreenManager {
             if (e.getStatusCode() == 401){
                 SessionTokenStore.clearToken();
             }
-            System.out.println(e.getMessage());
+            System.out.println(errorMessageForInitialRoute(e));
             return Route.HOME;
         }
         catch (IOException | InterruptedException e){
@@ -81,5 +81,17 @@ public class ScreenManager {
         }
 
 
+    }
+
+    private String errorMessageForInitialRoute(ApiResponseException e) {
+        int status = e.getStatusCode();
+        return switch (status) {
+            case 400 -> "Saved session is invalid. Please log in again.";
+            case 401 -> "Saved session has expired or is invalid. Please log in again.";
+            case 403 -> "You do not have access to this account. Please log in again.";
+            case 404 -> "User data not found. Please log in again.";
+            case 500 -> "Server error while loading your data. Starting from Home screen.";
+            default -> "Unexpected error (" + status + ") while loading your data. Starting from Home screen.";
+        };
     }
 }
