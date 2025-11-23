@@ -56,7 +56,7 @@ public class ScreenManager {
         System.out.println("Bye!");
     }
 
-    private Route decideInitialRoute() {
+    Route decideInitialRoute() {
         Optional<String> tokenOpt = SessionTokenStore.loadToken();
         if (tokenOpt.isEmpty()) {
             return Route.HOME;
